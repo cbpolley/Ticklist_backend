@@ -1,20 +1,20 @@
 const express = require('express')
 const app = express()
-const db = require('./db');
-const port = 3000
+// const db = require('./db');
+// const port = 3000
 const cors = require('cors');
 const dotenv = require('dotenv');
-const compression = require('compression');
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json({
-  limit: '50mb'
-});
+// const compression = require('compression');
+// const bodyParser = require('body-parser');
+// const jsonParser = bodyParser.json({
+//   limit: '50mb'
+// });
 
 
 dotenv.config();
 
-app.use(compression());
-app.use(jsonParser);
+// app.use(compression());
+// app.use(jsonParser);
 
 const http = require('http').Server(app);
 

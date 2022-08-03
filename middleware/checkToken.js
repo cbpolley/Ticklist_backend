@@ -3,7 +3,6 @@ const db = require('../db/index.js');
 
 function auth(req, res, next) {
 
-
   //check if token is not undefined
   if (typeof req.headers.authorization !== "undefined") {
     let token = req.headers.authorization;
