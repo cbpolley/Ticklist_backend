@@ -20,50 +20,49 @@ const http = require('http').Server(app);
 
 app.use(cors());
 
-// app.options('*', function(req, res, next) {
-//   res.append('Access-Control-Allow-Origin', '*';
-//
-//   res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.append('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization, Referer');;
-//   next();
-// })
+app.options('*', function(req, res, next) {
+  res.append('Access-Control-Allow-Origin', '*');
 
-// app.all('/*', function(req, res, next) {
-//
-//   let query = 'SELECT origin FROM app.allowed_origins';
-//
-//   db
-//     .query(query)
-//     .then(response => {
-//
-//       const allowedOrigins = [];
-//
-//       function pushOrgin(item, index) {
-//         allowedOrigins.push(item.origin)
-//       }
-//       response.rows.forEach(pushOrgin)
-//       const origin = req.headers.origin;
-//
-//       if (allowedOrigins.includes(origin)) {
-//         res.setHeader('Access-Control-Allow-Origin', origin);
-//       }
-//
-//       res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//       res.append('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization, Referer');;
-//       next();
-//     })
-//     .catch(err => {
-//       console.log(err)
-//     })
-//
-//
-//
-// })
+  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.append('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization, Referer');;
+  next();
+})
+
+app.all('/*', function(req, res, next) {
+
+  let query = 'SELECT origin FROM app.allowed_origins';
+
+  db
+    .query(query)
+    .then(response => {
+
+      const allowedOrigins = [];
+
+      function pushOrgin(item, index) {
+        allowedOrigins.push(item.origin)
+      }
+      response.rows.forEach(pushOrgin)
+      const origin = req.headers.origin;
+
+      if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+      }
+
+      res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+      res.append('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization, Referer');
+      next();
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+
+
+})
 
 
 
 //ROUTES
-// const auth = require('./router/auth');
 const lists = require('./router/lists');
 const users = require('./router/users');
 const payment = require('./router/payment');
