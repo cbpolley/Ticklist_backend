@@ -10,11 +10,4 @@ router.get('/', function(req, res) {
 
 router.get('/intent/:user_id', paymentController.getPaymentIntent);
 
-
-router.get('/getAll', paymentController.getAll);
-router.post('/add', paymentController.add);
-router.post('/edit', paymentController.edit);
-router.delete('/delete/:id', paymentController.delete);
-
-
 module.exports = router
