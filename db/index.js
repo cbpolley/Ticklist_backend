@@ -1,17 +1,13 @@
 'use strict';
-const fs = require('fs');
-const path = require('path');
 
 const {
   Pool
 } = require('pg');
+
 const dotenv = require('dotenv');
 dotenv.config();
 
-let dbUrl= process.env.DATABASE_URL
-
-console.log('dbUrl')
-console.log(dbUrl)
+let dbUrl = process.env.DATABASE_URL
 
 const pool = new Pool({
   connectionString: dbUrl,

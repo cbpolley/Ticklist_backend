@@ -1,6 +1,7 @@
 'use strict';
 
-const db = require('../index.js');
+const db = require('../../db/index.js');
+
 
 exports.create = () => {
 

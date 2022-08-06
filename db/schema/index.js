@@ -4,15 +4,15 @@
 const users = require('./createUsers.js');
 const lists = require('./createLists.js');
 const payment = require('./createPayment.js');
-// const allowedOrigins = require('./createAllowedOrigins.js');
+const allowedOrigins = require('./createAllowedOrigins.js');
 
 //Create The Tables
 async function createDB() {
 
+  await users.create();
   await lists.create();
   await payment.create();
-  await users.create();
-  // await allowedOrigins.create();
+  await allowedOrigins.create();
   return
 }
 
