@@ -8,15 +8,8 @@ const {
 const dotenv = require('dotenv');
 dotenv.config();
 
-let dbUrl;
+let dbUrl = DATABASE_URL
 
-if (process.env.ENV === 'DEV') {
-  dbUrl = process.env.DEV_DATABASE_URL
-} else if (process.env.ENV === 'STAGE') {
-  dbUrl = process.env.STAGE_DATABASE_URL
-} else if (process.env.ENV === 'PROD') {
-  dbUrl = process.env.PROD_DATABASE_URL
-}
 console.log('dbUrl')
 console.log(dbUrl)
 
