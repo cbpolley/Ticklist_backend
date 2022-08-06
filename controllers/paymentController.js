@@ -6,14 +6,11 @@ const jwt = require('jsonwebtoken');
 
 const stripe = require('stripe')(process.env.stripe_key);
 
-import userController from './userController'
-
-
 exports.getPaymentIntent = async (req, res, next) => {
 
     let user_id = req.params.user_id;
 
-    let query = 'SELECT user_id, email, first_name, last_name, user_type, shared_lists FROM users WHERE user_id = $1'
+    let query = 'SELECT email FROM users WHERE user_id = $1'
     let values = [user_id]
   
     db
