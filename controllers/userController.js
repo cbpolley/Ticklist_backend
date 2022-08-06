@@ -82,7 +82,7 @@ exports.add = async (req, res, next) => {
 
   db
   .query(query, values)
-  .then(response => {
+  .then(async (response) => {
     if (response.rows.length > 0) {
       // email account already exists on the database, cancel the user add process and inform user
       res.status(500).send({
