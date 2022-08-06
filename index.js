@@ -64,7 +64,7 @@ app.use(cors());
 
 //ROUTES
 // const auth = require('./router/auth');
-const list s= require('./router/lists');
+const lists = require('./router/lists');
 const users = require('./router/users');
 const payment = require('./router/payment');
 
