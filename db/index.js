@@ -8,7 +8,7 @@ const {
 const dotenv = require('dotenv');
 dotenv.config();
 
-let dbUrl = DATABASE_URL
+let dbUrl= process.env.DATABASE_URL
 
 console.log('dbUrl')
 console.log(dbUrl)
