@@ -64,13 +64,13 @@ app.use(cors());
 
 //ROUTES
 // const auth = require('./router/auth');
-const list = require('./router/list');
-const user = require('./router/user');
+const list s= require('./router/lists');
+const users = require('./router/users');
 const payment = require('./router/payment');
 
 //ENDPOINTS
-app.use('/list', list);
-app.use('/user', user);
+app.use('/lists', lists);
+app.use('/users', users);
 app.use('/payment', payment);
 
 app.get('/', (req, res) => {

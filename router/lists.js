@@ -5,7 +5,7 @@ const listController = require('../controllers/listController.js');
 
 // define the home page route
 router.get('/', function(req, res) {
-  res.send('list Home')
+  res.send('Lists Home')
 })
 
 router.get('/getSingle/:id', listController.getSingle);

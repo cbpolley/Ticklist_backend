@@ -6,7 +6,7 @@ const userAuthController = require('../controllers/userAuthController.js');
 
 // define the home page route
 router.get('/', function(req, res) {
-  res.send('User Home')
+  res.send('Users Home')
 })
 
 router.get('/getSingle/:id', userController.getSingle);
