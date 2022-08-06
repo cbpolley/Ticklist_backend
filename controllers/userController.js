@@ -23,6 +23,30 @@ exports.getSingle = async (req, res, next) => {
 
 }
 
+exports.checkExistingName = async (req, res, next) => {
+
+  let email = req.params.email
+
+  let query = 'SELECT email FROM users WHERE email = $1'
+  let values = [email]
+
+  db
+  .query(query, values)
+  .then(response => {
+    if (response.rows.length > 0) {
+      res.status(200).send({'existing_email':'true'})
+    } else {
+      res.status(200).send({'existing_email':'false'})
+    }
+  })
+  .catch(err => {
+    res.status(501).send({
+      'Database Error': err
+    })
+  })
+
+}
+
 exports.getAll = async (req, res, next) => {
 
   let query = `
@@ -45,7 +69,7 @@ exports.getAll = async (req, res, next) => {
 
 exports.add = async (req, res, next) => {
 
-  console.log(req.body.packet)
+  // first check to see if user exists
 
   let email = req.body.packet.email;
   let first_name = req.body.packet.first_name;
@@ -53,31 +77,63 @@ exports.add = async (req, res, next) => {
   let user_type = req.body.packet.user_type;
   let plain_password = req.body.packet.password;
 
-  const hashPassword = async (password, saltRounds = 10) => {
-    try {
-      const salt = await bcrypt.genSalt(saltRounds);
-      return await bcrypt.hash(plain_password, salt);
-    } catch (error) {
-      console.error('Hashing Error: ', error);
-    }
-    return null;
-  };
-
-  let hash = await hashPassword(plain_password);
-
-  let query = 'INSERT INTO users (email, first_name, last_name, password, user_type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())'
-  let values = [email, first_name, last_name, hash, user_type]
+  let query = 'SELECT email FROM users WHERE email = $1'
+  let values = [email]
 
   db
-    .query(query, values)
-    .then(response => {
-      res.status(200).send('success')
+  .query(query, values)
+  .then(response => {
+    if (response.rows.length > 0) {
+      // email account already exists on the database, cancel the user add process and inform user
+      res.status(500).send({
+        'status':'forbidden',
+        'existing_email':'true'})
+    } else {
+      // email account does not already exist, proceed with user add process
+      const hashPassword = async (password, saltRounds = 10) => {
+        try {
+          const salt = await bcrypt.genSalt(saltRounds);
+          return await bcrypt.hash(plain_password, salt);
+        } catch (error) {
+          console.error('Hashing Error: ', error);
+        }
+        return null;
+      };
+
+      // don't store plaintext passwords in the database
+      let hash = await hashPassword(plain_password);
+
+      let query = `
+      INSERT INTO 
+        users (email, first_name, last_name, password, user_type, created_at, updated_at) 
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      RETURNING user_id
+      `
+      let values = [email, first_name, last_name, hash, user_type]
+
+      db
+        .query(query, values)
+        .then(response => {
+          res.status(200).send({
+            'status':'success',
+            'user_id': response.rows[0].user_id
+          })
+        })
+        .catch(err => {
+          res.status(501).send({
+            'Database Error': err
+          })
+        })
+      }
+  })
+  .catch(err => {
+    res.status(501).send({
+      'Database Error': err
     })
-    .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
-    })
+  })
+
+
+
 }
 
 exports.edit = async (req, res, next) => {

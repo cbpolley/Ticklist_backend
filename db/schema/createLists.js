@@ -10,7 +10,10 @@ CREATE TABLE IF NOT EXISTS lists(
   list_contents JSON,
   list_owner INTEGER NOT NULL,
   created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL
+  updated_at TIMESTAMP NOT NULL,
+  CONSTRAINT fk_user
+    FOREIGN KEY(user_id)
+      REFERENCES users(list_owner)
 );`;
 
   let promise = new Promise(function(resolve, reject) {

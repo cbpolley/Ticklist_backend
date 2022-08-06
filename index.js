@@ -66,10 +66,12 @@ app.use(cors());
 // const auth = require('./router/auth');
 const list = require('./router/list');
 const user = require('./router/user');
+const payment = require('./router/payment');
 
 //ENDPOINTS
 app.use('/list', list);
 app.use('/user', user);
+app.use('/payment', payment);
 
 app.get('/', (req, res) => {
   res.status(200).send('server is running')
