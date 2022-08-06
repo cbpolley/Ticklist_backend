@@ -15,7 +15,7 @@ exports.getPaymentIntent = async (req, res, next) => {
   
     db
     .query(query, values)
-    .then(response => {
+    .then(async (response) => {
         let user_details = response.data.rows[0];
 
         const customer = await stripe.customer.create(
