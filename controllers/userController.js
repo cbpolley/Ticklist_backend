@@ -107,7 +107,7 @@ exports.add = async (req, res, next) => {
       let query = `
       INSERT INTO 
         users (email, password, user_type, created_at, updated_at) 
-      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      VALUES ($1, $2, $3, NOW(), NOW())
       RETURNING user_id
       `
       let values = [email, hash, user_type]
