@@ -2,7 +2,7 @@
 
 const db = require('../db/index.js')
 const bcrypt = require('bcrypt');
-import { generateSlug } from "random-word-slugs";
+const generateSlug = require('random-word-slugs')
 
 exports.getSingle = async (req, res, next) => {
 
