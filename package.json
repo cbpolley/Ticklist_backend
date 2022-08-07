@@ -30,6 +30,7 @@
     "jsonwebtoken": "^8.5.1",
     "path": "^0.12.7",
     "pg": "^8.7.3",
+    "random-word-slugs": "^0.1.6",
     "stripe": "^10.0.0"
   }
 }
