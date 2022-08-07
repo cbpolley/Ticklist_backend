@@ -44,19 +44,12 @@ exports.getPaymentIntent = async (req, res, next) => {
             payment_method_types: ['card'],
             customer: customer.id
           })
-          .then(() => {
-            res.status(200).send({
-                status: 'success', 
-                paymentIntentClientSecret : paymentIntent.client_secret,
-                customerEphemeralKeySecret : ephermalKey.secret,
-                customerId : customer.id
-            })
-          })
-          .catch((err) => {
-            console.log('stripe3. ' + err)
-            res.status(500).send({
-                'status': 'failure', 
-            })
+
+        res.status(200).send({
+            status: 'success', 
+            paymentIntentClientSecret : paymentIntent.client_secret,
+            customerEphemeralKeySecret : ephermalKey.secret,
+            customerId : customer.id
         })
     })
     .catch(err => {
