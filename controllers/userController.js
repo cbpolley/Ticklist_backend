@@ -2,7 +2,7 @@
 
 const db = require('../db/index.js')
 const bcrypt = require('bcrypt');
-const generateSlug = require('random-word-slugs')
+const randomSlug = require('random-word-slugs')
 
 exports.getSingle = async (req, res, next) => {
 
@@ -105,7 +105,7 @@ exports.add = async (req, res, next) => {
       // don't store plaintext passwords in the database
       let hash = await hashPassword(plain_password);
 
-      let username = generateSlug(2, { format: "title" })
+      let username = randomSlug.generateSlug(2, { format: "title" })
 
       let query = `
       INSERT INTO 
