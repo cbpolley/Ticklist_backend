@@ -41,7 +41,7 @@ exports.getPaymentIntent = async (req, res, next) => {
         console.log(ephemeralKey)
     
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: 0.59,
+            amount: 059,
             currency: 'gbp',
             payment_method_types: ['card'],
             customer: customer.id
