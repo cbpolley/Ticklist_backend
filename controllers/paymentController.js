@@ -25,10 +25,16 @@ exports.getPaymentIntent = async (req, res, next) => {
             }
         ).catch((err) => console.log('stripe1. ' + err))
 
+        console.log('customer')
+        console.log(customer)
+
         const ephermalKey = stripe.ephermalKey.create({
             customer: customer.id,
             api_version: process.env.stripe_api_version
         }).catch((err) => console.log('stripe2. ' + err))
+
+        console.log('ephermalKey')
+        console.log(ephermalKey)
     
         const paymentIntent = await stripe.paymentIntents.create({
             amount: 0.59,
@@ -36,6 +42,9 @@ exports.getPaymentIntent = async (req, res, next) => {
             payment_method_types: ['card'],
             customer: customer.id
           }).catch((err) => console.log('stripe3. ' + err))
+
+        console.log('paymentIntent')
+        console.log(paymentIntent)
     
     
         if (paymentIntent) {
