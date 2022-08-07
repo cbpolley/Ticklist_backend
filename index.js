@@ -5,16 +5,16 @@ const db = require('./db');
 const cors = require('cors');
 const dotenv = require('dotenv');
 // const compression = require('compression');
-// const bodyParser = require('body-parser');
-// const jsonParser = bodyParser.json({
-//   limit: '50mb'
-// });
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json({
+  limit: '50mb'
+});
 
 
 dotenv.config();
 
 // app.use(compression());
-// app.use(jsonParser);
+app.use(jsonParser);
 
 const http = require('http').Server(app);
 
