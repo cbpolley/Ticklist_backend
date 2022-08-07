@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS lists(
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,
   CONSTRAINT fk_user
-    FOREIGN KEY(user_id)
-      REFERENCES users(list_owner)
+    FOREIGN KEY(list_owner)
+      REFERENCES users(user_id)
 );`;
 
   let promise = new Promise(function(resolve, reject) {

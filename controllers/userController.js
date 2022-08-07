@@ -7,7 +7,7 @@ exports.getSingle = async (req, res, next) => {
 
   let user_id = req.params.id
 
-  let query = 'SELECT user_id, email, first_name, last_name, user_type, shared_lists FROM users WHERE user_id = $1'
+  let query = 'SELECT user_id, email, user_type, shared_lists FROM users WHERE user_id = $1'
   let values = [user_id]
 
   db
@@ -51,7 +51,7 @@ exports.getAll = async (req, res, next) => {
 
   let query = `
   SELECT
-    user_id, email, first_name, last_name, user_type, shared_lists 
+    user_id, email, user_type, shared_lists 
   FROM
     users`
 
@@ -72,11 +72,8 @@ exports.add = async (req, res, next) => {
   // first check to see if user exists
 
   let email = req.body.packet.email;
-  let first_name = req.body.packet.first_name;
-  let last_name = req.body.packet.last_name;
   let user_type = req.body.packet.user_type;
   let plain_password = req.body.packet.password;
-
   let query = 'SELECT email FROM users WHERE email = $1'
   let values = [email]
 
@@ -105,11 +102,11 @@ exports.add = async (req, res, next) => {
 
       let query = `
       INSERT INTO 
-        users (email, first_name, last_name, password, user_type, created_at, updated_at) 
+        users (email, password, user_type, created_at, updated_at) 
       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING user_id
       `
-      let values = [email, first_name, last_name, hash, user_type]
+      let values = [email, hash, user_type]
 
       db
         .query(query, values)
@@ -139,19 +136,17 @@ exports.add = async (req, res, next) => {
 exports.edit = async (req, res, next) => {
 
   let email = req.body.packet.email
-  let first_name = req.body.packet.first_name
-  let last_name = req.body.packet.last_name
   let user_id = req.body.packet.user_id
 
   let query = `
     UPDATE
       users
     SET
-      email = $1, first_name = $2, last_name = $3, updated_at = NOW()
+      email = $1, user_type = $2, updated_at = NOW()
     WHERE
-      user_id = $4
-    RETURNING user_id, first_name, last_name, email, created_at`
-  let values = [email, first_name, last_name, user_id]
+      user_id = $3
+    RETURNING user_id, user_type, email, created_at`
+  let values = [email, user_type, user_id]
 
   db
     .query(query, values)

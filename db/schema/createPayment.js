@@ -6,7 +6,7 @@ const db = require('../../db/index.js');
 exports.create = () => {
 
   let query = `
-  CREATE TABLE IF NOT EXISTS users(
+  CREATE TABLE IF NOT EXISTS payment(
     payment_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     payment_period_start TIMESTAMP,
