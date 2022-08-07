@@ -71,6 +71,8 @@ exports.add = async (req, res, next) => {
 
   // first check to see if user exists
 
+  console.log(req)
+
   let email = req.body.packet.email;
   let user_type = req.body.packet.user_type;
   let plain_password = req.body.packet.password;
