@@ -9,8 +9,8 @@ router.get('/', function(req, res) {
   res.send('Users Home')
 })
 
-router.get('/getSingle/:id', userController.getSingle);
-router.get('/getAll', userController.getAll);
+router.get('/single/:id', userController.getSingle);
+router.get('/all', userController.getAll);
 router.post('/add', userController.add);
 router.post('/edit', userController.edit);
 router.delete('/delete/:id', userController.delete);

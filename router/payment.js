@@ -8,6 +8,6 @@ router.get('/', function(req, res) {
   res.send('Payment Home')
 })
 
-router.get('/intent/:user_id', paymentController.getPaymentIntent);
+router.get('/intent/single/:user_id', paymentController.getPaymentIntent);
 
 module.exports = router

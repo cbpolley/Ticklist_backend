@@ -8,8 +8,8 @@ router.get('/', function(req, res) {
   res.send('Lists Home')
 })
 
-router.get('/getSingle/:id', listController.getSingle);
-router.get('/getAll', listController.getAll);
+router.get('/single/:id', listController.getSingle);
+router.get('/all', listController.getAll);
 router.post('/add', listController.add);
 router.post('/edit', listController.edit);
 router.delete('/delete/:id', listController.delete);
