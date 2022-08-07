@@ -23,7 +23,7 @@ exports.getPaymentIntent = async (req, res, next) => {
 
         let user_details = response.rows[0];
 
-        const customer = await stripe.customer.create(
+        const customer = await stripe.customers.create(
             {
                 email: user_details.email
             }
@@ -32,7 +32,7 @@ exports.getPaymentIntent = async (req, res, next) => {
         console.log('customer')
         console.log(customer)
 
-        const ephermalKey = stripe.ephermalKey.create({
+        const ephermalKey = stripe.ephermalKeys.create({
             customer: customer.id,
             api_version: process.env.stripe_api_version
         }).catch((err) => {console.log('stripe2. ' + err)})
