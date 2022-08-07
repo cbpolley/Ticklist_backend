@@ -1,5 +1,3 @@
-'use strict';
-
 const db = require('../db/index.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -41,7 +39,7 @@ exports.getPaymentIntent = async (req, res, next) => {
         console.log(ephemeralKey)
     
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: 059,
+            amount: 149,
             currency: 'gbp',
             payment_method_types: ['card'],
             customer: customer.id
