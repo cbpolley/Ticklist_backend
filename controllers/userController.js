@@ -72,8 +72,6 @@ exports.add = async (req, res, next) => {
 
   // first check to see if user exists
 
-  console.log(req)
-
   let email = req.body.packet.email;
   let user_type = req.body.packet.user_type;
   let plain_password = req.body.packet.password;
@@ -83,8 +81,6 @@ exports.add = async (req, res, next) => {
   db
   .query(query, values)
   .then(async (response) => {
-    console.log('response')
-    console.log(response)
     if (response.rows.length > 0) {
       // email account already exists on the database, cancel the user add process and inform user
       res.status(500).send({
