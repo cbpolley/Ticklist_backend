@@ -8,7 +8,9 @@ const stripe = require('stripe')(process.env.stripe_key);
 
 exports.getPaymentIntent = async (req, res, next) => {
 
-    let user_id = req.params.user_id;
+    console.log(req)
+
+    let user_id = req.params.id;
 
     let query = 'SELECT email FROM users WHERE user_id = $1'
     let values = [user_id]
@@ -16,6 +18,8 @@ exports.getPaymentIntent = async (req, res, next) => {
     db
     .query(query, values)
     .then( async (response) => {
+
+        console.log(response)
 
         let user_details = response.rows[0];
 
