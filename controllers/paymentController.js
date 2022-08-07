@@ -43,24 +43,21 @@ exports.getPaymentIntent = async (req, res, next) => {
             currency: 'gbp',
             payment_method_types: ['card'],
             customer: customer.id
-          }).catch((err) => {console.log('stripe3. ' + err)})
-
-        console.log('paymentIntent')
-        console.log(paymentIntent)
-    
-    
-        if (paymentIntent) {
+          })
+          .then(() => {
             res.status(200).send({
                 status: 'success', 
                 paymentIntentClientSecret : paymentIntent.client_secret,
                 customerEphemeralKeySecret : ephermalKey.secret,
                 customerId : customer.id
             })
-        } else {
+          })
+          .catch((err) => {
+            console.log('stripe3. ' + err)
             res.status(500).send({
                 'status': 'failure', 
             })
-        }
+        })
     })
     .catch(err => {
       res.status(501).send({
