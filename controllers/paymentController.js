@@ -48,7 +48,7 @@ exports.getPaymentIntent = async (req, res, next) => {
         res.status(200).send({
             status: 'success', 
             paymentIntentClientSecret : paymentIntent.client_secret,
-            customerEphemeralKeySecret : ephermalKey.secret,
+            customerEphemeralKeySecret : ephemeralKey.secret,
             customerId : customer.id
         })
     })
