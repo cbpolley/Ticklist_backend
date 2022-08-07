@@ -30,7 +30,7 @@ app.options('*', function(req, res, next) {
 
 app.all('/*', function(req, res, next) {
 
-  let query = 'SELECT origin FROM app.allowed_origins';
+  let query = 'SELECT origin FROM allowed_origins';
 
   db
     .query(query)
