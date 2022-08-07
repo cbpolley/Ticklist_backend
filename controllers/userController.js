@@ -2,12 +2,13 @@
 
 const db = require('../db/index.js')
 const bcrypt = require('bcrypt');
+import { generateSlug } from "random-word-slugs";
 
 exports.getSingle = async (req, res, next) => {
 
   let user_id = req.params.id
 
-  let query = 'SELECT user_id, email, user_type, shared_lists FROM users WHERE user_id = $1'
+  let query = 'SELECT user_id, username, email, user_type, shared_lists FROM users WHERE user_id = $1'
   let values = [user_id]
 
   db
@@ -51,7 +52,7 @@ exports.getAll = async (req, res, next) => {
 
   let query = `
   SELECT
-    user_id, email, user_type, shared_lists 
+    user_id, username, email, user_type, shared_lists 
   FROM
     users`
 
@@ -104,13 +105,15 @@ exports.add = async (req, res, next) => {
       // don't store plaintext passwords in the database
       let hash = await hashPassword(plain_password);
 
+      let username = generateSlug(2, { format: "title" })
+
       let query = `
       INSERT INTO 
-        users (email, password, user_type, created_at, updated_at) 
-      VALUES ($1, $2, $3, NOW(), NOW())
+        users (email, username, password, user_type, created_at, updated_at) 
+      VALUES ($1, $2, $3, $4, NOW(), NOW())
       RETURNING user_id
       `
-      let values = [email, hash, user_type]
+      let values = [email, username, hash, user_type]
 
       db
         .query(query, values)
@@ -146,11 +149,11 @@ exports.edit = async (req, res, next) => {
     UPDATE
       users
     SET
-      email = $1, user_type = $2, updated_at = NOW()
+      email = $1, username = $2, user_type = $3, updated_at = NOW()
     WHERE
-      user_id = $3
-    RETURNING user_id, user_type, email, created_at`
-  let values = [email, user_type, user_id]
+      user_id = $4
+    RETURNING user_id, username, user_type, email, created_at`
+  let values = [email, username, user_type, user_id]
 
   db
     .query(query, values)
