@@ -32,13 +32,13 @@ exports.getPaymentIntent = async (req, res, next) => {
         console.log('customer')
         console.log(customer)
 
-        const ephermalKey = await stripe.ephermalKeys.create({
+        const ephemeralKey = await stripe.ephemeralKeys.create({
             customer: customer.id,
             apiVersion: process.env.stripe_api_version
         }).catch((err) => {console.log('stripe2. ' + err)})
 
-        console.log('ephermalKey')
-        console.log(ephermalKey)
+        console.log('ephemeralKey')
+        console.log(ephemeralKey)
     
         const paymentIntent = await stripe.paymentIntents.create({
             amount: 0.59,
