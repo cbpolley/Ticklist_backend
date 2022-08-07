@@ -94,7 +94,7 @@ exports.add = async (req, res, next) => {
       const hashPassword = async (password, saltRounds = 10) => {
         try {
           const salt = await bcrypt.genSalt(saltRounds);
-          return await bcrypt.hash(plain_password, salt);
+          return await bcrypt.hash(password, salt);
         } catch (error) {
           console.error('Hashing Error: ', error);
         }
@@ -122,14 +122,14 @@ exports.add = async (req, res, next) => {
         })
         .catch(err => {
           res.status(501).send({
-            'Database Error': err
+            '2. Database Error': err
           })
         })
       }
   })
   .catch(err => {
     res.status(501).send({
-      'Database Error': err
+      '1. Database Error': err
     })
   })
 
