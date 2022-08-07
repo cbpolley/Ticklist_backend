@@ -23,7 +23,7 @@ exports.getPaymentIntent = async (req, res, next) => {
             {
                 email: user_details.email
             }
-        ).catch((err) => console.log('stripe1. ' + err))
+        ).catch((err) => {console.log('stripe1. ' + err)})
 
         console.log('customer')
         console.log(customer)
@@ -31,7 +31,7 @@ exports.getPaymentIntent = async (req, res, next) => {
         const ephermalKey = stripe.ephermalKey.create({
             customer: customer.id,
             api_version: process.env.stripe_api_version
-        }).catch((err) => console.log('stripe2. ' + err))
+        }).catch((err) => {console.log('stripe2. ' + err)})
 
         console.log('ephermalKey')
         console.log(ephermalKey)
@@ -41,7 +41,7 @@ exports.getPaymentIntent = async (req, res, next) => {
             currency: 'gbp',
             payment_method_types: ['card'],
             customer: customer.id
-          }).catch((err) => console.log('stripe3. ' + err))
+          }).catch((err) => {console.log('stripe3. ' + err)})
 
         console.log('paymentIntent')
         console.log(paymentIntent)
