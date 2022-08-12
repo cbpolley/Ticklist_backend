@@ -44,8 +44,14 @@ exports.getPaymentIntent = async (req, res, next) => {
             payment_method_types: ['card'],
             customer: customer.id
           })
+
+          console.log('paymentIntent')
+          console.log(paymentIntent)
     
         const setupIntent = await stripe.setupIntents.create({usage: 'on_session'});
+
+        console.log('setupIntent')
+        console.log(setupIntent)
 
         res.status(200).send({
             status: 'success', 
