@@ -86,25 +86,20 @@ exports.updatePaymentRecords = async (req, res, next) => {
     let receipt_id = "tl" + user_id + time.slice(time.length - 4)
     
     let query = `
-      UPDATE
-        payment
-      SET
-        payment_period_start = $2, 
-        payment_period_end = $3, 
-        amount_paid = $4, 
-        vendor_id = $5,
-        receipt_id = $6,
-        updated_at = NOW()
-      WHERE
-        user_id = $1`
+      INSERT INTO
+        payment (user_id, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
+      VALUES 
+        ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+      RETURNING payment_id`
+
     let values = [user_id, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id]
   
     db
       .query(query, values)
-      .then(response => {
+      .then(() => {
         res.status(200).send({status:'Success'})
       })
-      .catch(err => {
+      .catch(() => {
         res.status(501).send({status:'Failed to update payment records'})
       })
   }
