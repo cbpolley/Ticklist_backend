@@ -83,9 +83,10 @@ exports.add = async (req, res, next) => {
   .then(async (response) => {
     if (response.rows.length > 0) {
       // email account already exists on the database, cancel the user add process and inform user
-      res.status(500).send({
+      res.status(200).send({
         'status':'forbidden',
-        'existing_email':'true'})
+        'existing_email':'true'
+      })
     } else {
       // email account does not already exist, proceed with user add process
       const hashPassword = async (password, saltRounds = 10) => {
