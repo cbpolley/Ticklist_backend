@@ -33,7 +33,7 @@ exports.login = async (req, res, next) => {
                               token = $1, updated_at = NOW()
                             WHERE
                               user_id = $2
-                            RETURNING user_id, email, first_name, last_name, user_type;`
+                            RETURNING user_id, email, username, user_type;`
             let valuesTwo = [token, dbRes.rows[0].user_id]
 
             db
