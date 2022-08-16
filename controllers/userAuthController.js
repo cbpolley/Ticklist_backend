@@ -25,7 +25,7 @@ exports.login = async (req, res, next) => {
         bcrypt.compare(plainPassword, hash, function(err, result) {
 
           if (result == true) {
-            var token = jwt.sign(dbRes.rows[0], process.env.TOKEN_SECRET);
+            var token = jwt.sign(dbRes.rows[0], process.env.token_secret);
 
             let queryTwo = `UPDATE
                               users
