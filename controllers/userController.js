@@ -24,7 +24,7 @@ exports.getSingle = async (req, res, next) => {
 
 }
 
-exports.checkExistingName = async (req, res, next) => {
+exports.checkExistingEmail = async (req, res, next) => {
 
   let email = req.params.email
 

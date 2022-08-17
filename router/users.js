@@ -15,8 +15,9 @@ router.post('/add', userController.add);
 router.post('/edit', userController.edit);
 router.delete('/delete/:id', userController.delete);
 
-router.get('/checkExistingEmail/:email', userController.delete);
+router.get('/checkExistingEmail/:email', userController.checkExistingEmail);
 
+router.get('/auth/checkUser/:token', userAuthController.checkUser);
 router.post('/auth/login', userAuthController.login);
 router.post('/auth/passwordReset', userAuthController.passwordReset);
 router.post('/auth/pinReset', userAuthController.pinReset);
