@@ -10,17 +10,32 @@ exports.login = async (req, res, next) => {
   let email = req.body.email;
   let plainPassword = req.body.password;
 
-  let query = `SELECT user_id, password FROM users WHERE email = $1;`;
-  let values = [email];
+  let query = `
+  with user_details as (
+    SELECT user_id, password FROM users WHERE email = ${email}
+  )
+
+  select
+      user_details.user_id,
+      user_details.password,
+      payment_period_end,
+      case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
+  from
+      payment
+  join user_details on user_details.user_id = payment.user_id`;
 
   db
-    .query(query, values)
+    .query(query)
     .then(dbRes => {
 
       if (dbRes.rows.length == 0) {
         res.status(401).send('Error - No User With That email')
+      } else if (dbRes.rows[0].payment_valid === false) {
+        res.status(401).send('Error - Payment out of date')
       } else {
         let hash = dbRes.rows[0].password;
+        let payment_period_end = dbRes.rows[0].payment_period_end
+        let payment_valid = dbRes.rows[0].payment_valid
 
         bcrypt.compare(plainPassword, hash, function(err, result) {
 
@@ -42,7 +57,9 @@ exports.login = async (req, res, next) => {
 
                 res.status(200).send({
                   user: dbResTwo.rows[0],
-                  token: token
+                  token: token,
+                  payment_period_end: payment_period_end,
+                  payment_valid: payment_valid
                 });
               })
               .catch(err => {
@@ -51,15 +68,12 @@ exports.login = async (req, res, next) => {
                 })
                 console.error(err)
               })
-
-
           } else {
             res.status(402).send('Error - Incorrect Password')
           }
 
         });
       }
-
     })
     .catch(err => {
       res.status(500).send({

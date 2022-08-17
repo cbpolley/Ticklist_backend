@@ -104,3 +104,26 @@ exports.updatePaymentRecords = async (req, res, next) => {
       })
   }
   
+exports.getPrevious = async (req, res, next) => {
+
+  let user_id = req.params.id
+  
+  let query = `
+    SELECT
+      payment_period_end,
+      case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
+    FROM
+      payment
+    WHERE user_id = ${user_id}`
+
+  db
+    .query(query)
+    .then((dbRes) => {
+      res.status(200).send(dbRes.rows)
+    })
+    .catch(() => {
+      res.status(501).send({
+        'Database Error': err
+      })
+    })
+}
