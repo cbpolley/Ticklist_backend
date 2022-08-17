@@ -4,18 +4,14 @@ const db = require('../db/index.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
 exports.login = async (req, res, next) => {
 
   let email = req.body.email;
   let plainPassword = req.body.password;
 
-  console.log(req.body)
-  console.log(email)
-
   let query = `
   with user_details as (
-    SELECT user_id, password FROM users WHERE email = ${email}
+    SELECT user_id, password FROM users WHERE email = '${email}'
   )
 
   select
