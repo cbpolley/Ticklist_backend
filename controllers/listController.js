@@ -88,47 +88,115 @@ exports.edit = async (req, res, next) => {
     })
 }
 
-exports.share = async (req, res, next) => {
+exports.addToSharedLists = async (req, res, next) => {
 
-  let list_id = req.body.packet.list_id;
-  let destination_user_id = req.body.packet.destination_user_id
+  let user_id = req.body.packet.user_id;
+  let access_pin = req.body.packet.access_pin
 
   let query = `
-    UPDATE
-      users
-    SET
-      SET shared_lists = COALESCE(shared_lists, '[]'::JSONB) || '["${list_id}"]'::JSONB
-      updated_at = NOW()
-    WHERE
-      user_id = $1
-    RETURNING *`
-  let values = [destination_user_id]
+    select 
+      * 
+    from lists 
+    where access_pin = ${access_pin} and 
+    share_with_user_id = ${user_id} and
+    NOW() < access_pin_expire`;
 
   db
-    .query(query, values)
+    .query(query)
     .then(response => {
-      res.status(200).send(response.rows)
+      if (response.rows.length > 0){
+        let list_id = response.rows[0].list_id
+        let queryTwo = `
+        UPDATE
+          users
+        SET
+          SET shared_lists = COALESCE(shared_lists, '[]'::JSONB) || '["${list_id}"]'::JSONB
+          updated_at = NOW()
+        WHERE
+          user_id = $1
+        RETURNING *`
+      let valuesTwo = [user_id]
+    
+      db
+        .query(queryTwo, valuesTwo)
+        .then(response => {
+          res.status(200).send(response.rows)
+        })
+        .catch(err => {
+          res.status(501).send({
+            'Database Error': err
+          })
+        })
+      } else {
+        res.status(400).send({'Error': 'Access pin invalid'})
+      }
     })
     .catch(err => {
       res.status(501).send({
         'Database Error': err
       })
     })
+
+
 }
+
+exports.shareWithUsername = async (req, res, next) => {
+
+  let username = req.body.packet.username
+  let user_id = req.body.packet.user_id
+  let ticklist = req.body.packet.ticklist
+
+  let query = `select username from users where username = '${username}'`
+
+  db
+  .query(query)
+  .then(response => {
+    // check if username exists
+    if(response.rows.length > 0){
+      let pin = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)
+      let queryTwo =     `
+      INSERT INTO
+        lists (list_contents, list_owner, access_pin, user_awaiting_access, access_pin_expire, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, NOW() + (10 * interval '1 minute'), NOW(), NOW())
+      RETURNING access_pin`
+      let valuesTwo = [ticklist, user_id, pin, username]
+
+      db
+      .query(queryTwo, valuesTwo)
+      .then(response => {
+        res.status(200).send({access_pin: pin})
+      })
+      .catch(err => {
+        res.status(501).send({
+          'Database Error': err
+        })
+      })
+
+    } else {
+      res.status(401).send('Username does not exist!')
+    }
+
+  })
+  .catch(err => {
+    res.status(501).send({
+      'Database Error': err
+    })
+  })
+}
+
 
 exports.getSharedLists = async (req, res, next) => {
 
-  let list_ids = req.body.packet.list_ids;
+  let user_id = req.body.params.user_id;
 
   let query = `
     SELECT
-      *
+      shared_lists
     FROM
-      lists
+      users
     WHERE
-      list_id in unnest($1)
-    RETURNING *`
-  let values = [list_ids]
+      user_id = $1`
+  let values = [user_id]
 
   db
     .query(query, values)
