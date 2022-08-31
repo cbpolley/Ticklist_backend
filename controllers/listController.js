@@ -144,7 +144,7 @@ exports.shareWithUsername = async (req, res, next) => {
 
   let username = req.body.packet.username
   let user_id = req.body.packet.user_id
-  let ticklist = req.body.packet.ticklist
+  let ticklist = JSON.stringify(req.body.packet.ticklist)
 
   let query = `select username from users where username = '${username}'`
 
