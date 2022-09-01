@@ -187,7 +187,7 @@ exports.shareWithUsername = async (req, res, next) => {
 
 exports.getSingleUserSharedLists = async (req, res, next) => {
 
-  let user_id = req.body.params.id;
+  let user_id = req.params.id;
 
   let query = `
     SELECT
