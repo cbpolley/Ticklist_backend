@@ -33,6 +33,8 @@ exports.getMultiple = async (req, res, next) => {
       list_owner 
     FROM lists WHERE list_id in ("${list_ids.join()}")`
 
+  console.log(query)
+
   db
   .query(query)
   .then(response => {
