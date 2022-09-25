@@ -110,7 +110,7 @@ exports.addToSharedLists = async (req, res, next) => {
         UPDATE
           users
         SET
-          SET shared_lists = COALESCE(shared_lists, '[]'::JSONB) || '["${list_id}"]'::JSONB
+          shared_lists = COALESCE(shared_lists, '[]'::JSONB) || '[${list_id}]'::JSONB,
           updated_at = NOW()
         WHERE
           user_id = $1
