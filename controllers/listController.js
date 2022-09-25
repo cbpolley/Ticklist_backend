@@ -34,7 +34,7 @@ exports.getMultiple = async (req, res, next) => {
     FROM lists WHERE list_id in ("${list_ids.join()}")`
 
   db
-  .query(query, values)
+  .query(query)
   .then(response => {
     res.status(200).send(response.rows)
   })
