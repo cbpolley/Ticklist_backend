@@ -91,14 +91,14 @@ exports.edit = async (req, res, next) => {
 exports.addToSharedLists = async (req, res, next) => {
 
   let user_id = req.body.packet.user_id;
-  let access_pin = req.body.packet.access_pin
+  let access_pin = parseInt(req.body.packet.access_pin)
 
   let query = `
     select 
       * 
     from lists 
     where access_pin = ${access_pin} and 
-    share_with_user_id = ${user_id} and
+    user_awaiting_access = ${user_id} and
     NOW() < access_pin_expire`;
 
   db
