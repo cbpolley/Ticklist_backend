@@ -201,7 +201,25 @@ exports.getSingleUserSharedLists = async (req, res, next) => {
   db
     .query(query, values)
     .then(response => {
-      res.status(200).send(response.rows)
+      let query = `SELECT user_awaiting_access FROM lists WHERE user_awaiting_access = ${user_id}`
+      db
+        .query(query)
+        .then(pending_response => {
+          console.log(pending_response)
+          if (pending_response.rows.length > 0){
+            res.status(200).send({
+              shared_lists: response.rows,
+              pending_lists: pending_response.rows
+            })
+          } else { 
+            res.status(200).send({
+              shared_lists: response.rows
+            })
+          }
+        }) 
+        .catch(err => {
+          console.log(err)
+        })
     })
     .catch(err => {
       res.status(501).send({
