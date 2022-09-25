@@ -146,7 +146,7 @@ exports.shareWithUsername = async (req, res, next) => {
   let user_id = req.body.packet.user_id
   let ticklist = JSON.stringify(req.body.packet.ticklist)
 
-  let query = `select username from users where username = '${username}'`
+  let query = `select user_id from users where username = '${username}'`
 
   db
   .query(query)
@@ -154,15 +154,12 @@ exports.shareWithUsername = async (req, res, next) => {
     // check if username exists
     if(response.rows.length > 0){
       let pin = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)
-      let queryTwo =     `
+      let queryTwo = `
       INSERT INTO
         lists (list_contents, list_owner, access_pin, user_awaiting_access, access_pin_expire, created_at, updated_at)
         VALUES ($1, $2, $3, $4, NOW() + (10 * interval '1 minute'), NOW(), NOW())
       RETURNING access_pin`
-      let valuesTwo = [ticklist, user_id, pin, username]
-
-      console.log(queryTwo)
-      console.log(valuesTwo)
+      let valuesTwo = [ticklist, user_id, pin, response.rows[0].user_id]
 
       db
       .query(queryTwo, valuesTwo)
