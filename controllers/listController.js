@@ -24,7 +24,7 @@ exports.getSingle = async (req, res, next) => {
 
 exports.getMultiple = async (req, res, next) => {
 
-  let list_ids = req.body.packet.shared_lists
+  let list_ids = req.body.packet
 
   let query = `
     SELECT 
