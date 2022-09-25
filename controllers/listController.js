@@ -240,7 +240,7 @@ exports.getSingleUserSharedLists = async (req, res, next) => {
           console.log(pending_response)
           if (pending_response.rows.length > 0){
             res.status(200).send({
-              shared_lists: response.rows,
+              shared_lists: response.rows[0].shared_lists,
               pending_lists: pending_response.rows[0].shared_lists
             })
           } else { 
