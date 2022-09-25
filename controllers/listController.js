@@ -161,6 +161,9 @@ exports.shareWithUsername = async (req, res, next) => {
       RETURNING access_pin`
       let valuesTwo = [ticklist, user_id, pin, username]
 
+      console.log(queryTwo)
+      console.log(valuesTwo)
+
       db
       .query(queryTwo, valuesTwo)
       .then(response => {

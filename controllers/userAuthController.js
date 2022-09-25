@@ -28,9 +28,9 @@ exports.login = async (req, res, next) => {
     .then(dbRes => {
 
       if (dbRes.rows.length == 0) {
-        res.status(401).send('Error - No User With That email')
+        res.status(401).send(`${email} is not registered with a paid account.`)
       } else if (dbRes.rows[0].payment_valid === false) {
-        res.status(401).send('Error - Payment out of date')
+        res.status(401).send(`The payment period has expired for ${email}`)
       } else {
         let hash = dbRes.rows[0].password;
         let payment_period_end = dbRes.rows[0].payment_period_end
@@ -117,7 +117,7 @@ exports.passwordReset = async (req, res, next) => {
 
   const msg = {
     to: email,
-    from: "info@grandintel.com",
+    from: "ticklist@cbpportfolio.com",
     templateId: templateId,
     dynamicTemplateData: {
       "pin": resetPin,
