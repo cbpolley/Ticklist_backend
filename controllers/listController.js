@@ -31,7 +31,7 @@ exports.getMultiple = async (req, res, next) => {
       list_id,
       list_contents,
       list_owner 
-    FROM lists WHERE list_id in ("${list_ids.join()}")`
+    FROM lists WHERE list_id in (${list_ids.join()})`
 
   console.log(query)
 
