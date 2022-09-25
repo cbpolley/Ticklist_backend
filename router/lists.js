@@ -9,6 +9,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/single/:id', listController.getSingle);
+router.post('/multiple', listController.getmultiple);
 router.get('/all', listController.getAll);
 router.post('/add', listController.add);
 router.post('/edit', listController.edit);

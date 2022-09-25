@@ -22,6 +22,30 @@ exports.getSingle = async (req, res, next) => {
 
 }
 
+exports.getMultiple = async (req, res, next) => {
+
+  let list_ids = req.body.packet.shared_lists
+
+  let query = `
+    SELECT 
+      list_id,
+      list_contents,
+      list_owner 
+    FROM lists WHERE list_id in ("${list_ids.join('", "')}")`
+
+  db
+  .query(query, values)
+  .then(response => {
+    res.status(200).send(response.rows)
+  })
+  .catch(err => {
+    res.status(501).send({
+      'Database Error': err
+    })
+  })
+
+}
+
 exports.getAll = async (req, res, next) => {
 
   let query = `SELECT * FROM lists`
@@ -120,7 +144,15 @@ exports.addToSharedLists = async (req, res, next) => {
       db
         .query(queryTwo, valuesTwo)
         .then(response => {
-          res.status(200).send(response.rows)
+
+          // remove user awaiting access so the app doesn't keep trying to add the same list
+          let queryThree = `UPDATE lists SET user_awaiting_access = null WHERE access_pin = ${access_pin}`
+          db
+            .query(queryThree)
+            .then(() => {
+              res.status(200).send(response.rows)
+            })
+          
         })
         .catch(err => {
           res.status(501).send({
@@ -209,7 +241,7 @@ exports.getSingleUserSharedLists = async (req, res, next) => {
           if (pending_response.rows.length > 0){
             res.status(200).send({
               shared_lists: response.rows,
-              pending_lists: pending_response.rows
+              pending_lists: pending_response.rows[0].shared_lists
             })
           } else { 
             res.status(200).send({
