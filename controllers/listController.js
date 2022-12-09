@@ -191,7 +191,7 @@ exports.shareWithUsername = async (req, res, next) => {
       const pin_query = `
       INSERT INTO
         groups (user_awaiting_access, access_pin, shared_by, access_pin_expire, created_at, updated_at)
-        VALUES ($2, $3, $4, $5, NOW() + (10 * interval '1 minute'), NOW(), NOW())
+        VALUES ($2, $3, $4, NOW() + (10 * interval '1 minute'), NOW(), NOW())
         where group_id = $1;`
       let values = [group_id, response.rows[0].user_id, pin, user_id]
 
