@@ -178,26 +178,26 @@ exports.shareWithUsername = async (req, res, next) => {
 
   let username = req.body.packet.username
   let user_id = req.body.packet.user_id
-  let ticklist = JSON.stringify(req.body.packet.ticklist)
+  let group_id = req.body.packet.group_id
 
-  let query = `select user_id from users where username = '${username}'`
+  const id_query = `select user_id from users where username = '${username}'`
 
   db
-  .query(query)
+  .query(id_query)
   .then(response => {
     // check if username exists
     if(response.rows.length > 0){
-      let pin = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)
-      let queryTwo = `
+      const pin = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)
+      const pin_query = `
       INSERT INTO
-        lists (list_contents, list_owner, access_pin, user_awaiting_access, access_pin_expire, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, NOW() + (10 * interval '1 minute'), NOW(), NOW())
-      RETURNING access_pin`
-      let valuesTwo = [ticklist, user_id, pin, response.rows[0].user_id]
+        groups (user_awaiting_access, access_pin, shared_by, access_pin_expire, created_at, updated_at)
+        VALUES ($2, $3, $4, $5, NOW() + (10 * interval '1 minute'), NOW(), NOW())
+        where group_id = $1;`
+      let values = [group_id, response.rows[0].user_id, pin, user_id]
 
       db
-      .query(queryTwo, valuesTwo)
-      .then(response => {
+      .query(pin_query, values)
+      .then(() => {
         res.status(200).send({access_pin: pin})
       })
       .catch(err => {
