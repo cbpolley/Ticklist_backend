@@ -13,9 +13,6 @@ router.post('/multiple', listController.getMultiple);
 router.get('/all', listController.getAll);
 router.post('/add', listController.add);
 router.post('/edit', listController.edit);
-router.post('/sharedLists/add', listController.addToSharedLists);
-router.get('/sharedLists/single/:id', listController.getSingleUserSharedLists);
-router.post('/shareWithUsername', listController.shareWithUsername);
 router.delete('/delete/:id', listController.delete);
 
 module.exports = router

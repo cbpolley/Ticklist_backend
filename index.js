@@ -55,22 +55,21 @@ app.all('/*', function(req, res, next) {
     .catch(err => {
       console.log(err)
     })
-
-
-
 })
-
-
 
 //ROUTES
 const lists = require('./router/lists');
 const users = require('./router/users');
 const payment = require('./router/payment');
+const groups = require('./router/groups');
+const sharing = require('./router/sharing');
 
 //ENDPOINTS
 app.use('/lists', lists);
 app.use('/users', users);
 app.use('/payment', payment);
+app.use('/groups', groups);
+app.use('/sharing', sharing);
 
 app.get('/', (req, res) => {
   res.status(200).send('server is running')
