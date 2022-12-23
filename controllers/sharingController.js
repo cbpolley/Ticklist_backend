@@ -145,18 +145,24 @@ exports.getGroupMembers = async (req, res, next) => {
 
 
   let query = `
+  with first as (
     SELECT
-      user_id,
-      is_member,
-      username
+       user_id,
+       is_member
     FROM
-      sharing
+        sharing
     WHERE
-      uuid = $1`
-  let values = [uuid]
+        uuid = '${uuid}'
+  )
+
+  SELECT
+      first.*, users.username
+  FROM
+      users
+  JOIN first on first.user_id = users.user_id`
 
   db
-    .query(query, values)
+    .query(query)
     .then(response => {
       res.status(200).send(response.rows)
     })
