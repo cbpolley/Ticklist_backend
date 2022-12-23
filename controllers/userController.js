@@ -8,7 +8,13 @@ exports.getSingle = async (req, res, next) => {
 
   let user_id = req.params.id
 
-  let query = 'SELECT user_id, username, email, user_type, shared_lists FROM users WHERE user_id = $1'
+  let query = `
+    SELECT 
+      user_id, 
+      username, 
+      email, 
+      user_type,
+      FROM users WHERE user_id = $1`
   let values = [user_id]
 
   db

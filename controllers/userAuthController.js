@@ -21,16 +21,14 @@ exports.login = async (req, res, next) => {
       case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
   from
       payment
-  join user_details on user_details.user_id = payment.user_id`;
+  right join user_details on user_details.user_id = payment.user_id`;
 
   db
     .query(query)
     .then(dbRes => {
 
-      if (dbRes.rows.length == 0) {
-        res.status(401).send(`${email} is not registered with a paid account.`)
-      } else if (dbRes.rows[0].payment_valid === false) {
-        res.status(401).send(`The payment period has expired for ${email}`)
+      if (dbRes.rows.length === 0) {
+        res.status(401).send(`Those details are incorrect.`)
       } else {
         let hash = dbRes.rows[0].password;
         let payment_period_end = dbRes.rows[0].payment_period_end
@@ -90,6 +88,7 @@ exports.checkUser = async (req, res, next) => {
   try{
     var decoded = jwt.verify(token, process.env.token_secret);
     res.status(200).send({
+      user_id: decoded.user_id,
       payment_period_end: decoded.payment_period_end,
       payment_valid: decoded.payment_valid
     })

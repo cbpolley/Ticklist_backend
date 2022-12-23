@@ -66,7 +66,8 @@ exports.shareWithUsernames = async (req, res, next) => {
   }, [])
 
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
-  let group_id = req.body.packet.group_id
+  let uuid = req.body.packet.uuid
+  
 
   const id_query = `select user_id, username from users where username in ${usernames}`
 
@@ -79,9 +80,9 @@ exports.shareWithUsernames = async (req, res, next) => {
       for (let i = 0; i < response.rows.length; i++) {
         const pin_query = `
         INSERT INTO
-          sharing (group_id, user_id, username, access_pin, is_member, access_pin_expire, created_at, updated_at)
+          sharing (uuid, user_id, username, access_pin, is_member, access_pin_expire, created_at, updated_at)
           VALUES ($1, $2, $3, $4, false, NOW() + (10 * interval '1 minute'), NOW(), NOW());`
-        let values = [group_id, response.rows[i].user_id, response.rows[i].username, pin]
+        let values = [uuid, response.rows[i].user_id, response.rows[i].username, pin]
 
         db
         .query(pin_query, values)
@@ -114,7 +115,7 @@ exports.getSharedGroups = async (req, res, next) => {
 
   let query = `
     SELECT
-      group_id
+      uuid
     FROM
       sharing
     WHERE
