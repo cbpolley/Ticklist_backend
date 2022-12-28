@@ -149,20 +149,23 @@ exports.add = async (req, res, next) => {
 
 exports.edit = async (req, res, next) => {
 
+  let group_id = req.body.packet.group_id;
   let group_name = req.body.packet.group_name;
   let group_options = req.body.packet.group_options;
+  let sharing_enabled = req.body.packet.sharing_enabled;
 
   let query = `
     UPDATE
       groups
     SET
       group_name = $2, 
-      group_options = $3, 
+      group_options = $3,
+      sharing_enabled = $4, 
       updated_at = NOW()
     WHERE
       group_id = $1
     RETURNING *`
-  let values = [group_name, group_options]
+  let values = [group_id, group_name, group_options, sharing_enabled]
 
   db
     .query(query, values)
