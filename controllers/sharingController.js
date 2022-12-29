@@ -60,13 +60,12 @@ exports.getSharingStatus = async (req, res, next) => {
   const uuid = req.body.uuid
 
   const query = `
-    SELECT * from GROUPS where uuid = ${uuid}`
+    SELECT * from GROUPS where uuid = '${uuid}'`
 
     db
   .query(query)
   .then((response) => {
     res.status(200).send(response.rows)
-
   })
   .catch((err) => {
     res.status(501).send({
