@@ -165,7 +165,7 @@ exports.getGroupMembers = async (req, res, next) => {
   with first as (
     SELECT
        user_id,
-       is_member,
+       is_member
     FROM
         sharing
     WHERE
