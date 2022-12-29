@@ -88,7 +88,7 @@ exports.checkUser = async (req, res, next) => {
   try{
     var decoded = jwt.verify(token, process.env.token_secret);
     res.status(200).send({
-      user_id: decoded.user_id,
+      uuid: decoded.uuid,
       payment_period_end: decoded.payment_period_end,
       payment_valid: decoded.payment_valid
     })

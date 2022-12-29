@@ -6,16 +6,15 @@ const randomSlug = require('random-word-slugs')
 
 exports.getSingle = async (req, res, next) => {
 
-  let user_id = req.params.id
+  let uuid = req.params.uuid
 
   let query = `
     SELECT 
-      user_id, 
       username, 
       email, 
       user_type,
-      FROM users WHERE user_id = $1`
-  let values = [user_id]
+      FROM users WHERE uuid = $1`
+  let values = [uuid]
 
   db
   .query(query, values)
