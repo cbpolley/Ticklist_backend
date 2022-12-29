@@ -131,7 +131,7 @@ exports.add = async (req, res, next) => {
       INSERT INTO
         sharing (uuid, user_id, is_member, created_at, updated_at)
       VALUES
-        ('${uuid}', ${owner_id}, true, NOW(), NOW());`;
+        ('${uuid}', '${owner_id}', true, NOW(), NOW());`;
 
       console.log(query)
 
