@@ -78,6 +78,8 @@ exports.add = async (req, res, next) => {
     await db
       .query(uuid_query)
       .then((response) => {
+        console.log('uuid res')
+        console.log(response)
         if (response.rows.length < 1){
           uuid_exists = false;
         } else {
@@ -94,6 +96,9 @@ exports.add = async (req, res, next) => {
     ($1, $2, $3, $4, NOW(), NOW());`;
 
   let values = [owner_id, uuid, group_name, group_options]
+
+  console.log(query)
+  console.log(values)
   
   db
     .query(query, values)
@@ -137,14 +142,14 @@ exports.add = async (req, res, next) => {
         })
         .catch(err => {
           res.status(501).send({
-            'Database Error': err
+            'Database Error lists': err
           })
         })
 
     })
     .catch(err => {
       res.status(501).send({
-        'Database Error': err
+        'Database Error groups': err
       })
     })
 }
