@@ -56,6 +56,25 @@ exports.confirmGroupMember = async (req, res, next) => {
     })
 }
 
+exports.getSharingStatus = async (req, res, next) => {
+  const uuid = req.body.uuid
+
+  const query = `
+    SELECT * from GROUPS where uuid = ${uuid}`
+
+    db
+  .query(query)
+  .then((response) => {
+    res.status(200).send(response.rows)
+
+  })
+  .catch((err) => {
+    res.status(501).send({
+      'Database Error': err
+    })
+  })
+}
+
 exports.shareWithUsernames = async (req, res, next) => {
 
   let userArray = req.body.packet.usernames.reduce((filter, obj) => { 
@@ -143,12 +162,11 @@ exports.getGroupMembers = async (req, res, next) => {
 
   console.log(req.params)
 
-
   let query = `
   with first as (
     SELECT
        user_id,
-       is_member
+       is_member,
     FROM
         sharing
     WHERE

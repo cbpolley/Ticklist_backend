@@ -18,7 +18,7 @@ exports.login = async (req, res, next) => {
       user_details.user_id,
       user_details.password,
       payment_period_end,
-      case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
+      case when now() >= payment.payment_period_start and now() <= payment_period_end then 1 else 0 end as payment_valid
   from
       payment
   right join user_details on user_details.user_id = payment.user_id`;

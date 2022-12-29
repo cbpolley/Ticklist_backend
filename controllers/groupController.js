@@ -3,10 +3,10 @@ const db = require('../db/index.js')
 
 exports.getSingle = async (req, res, next) => {
 
-  let group_id = req.params.id
+  let uuid = req.params.uuid
 
-  let query = 'SELECT * FROM groups WHERE group_id = $1'
-  let values = [group_id]
+  let query = 'SELECT * FROM groups WHERE uuid = $1'
+  let values = [uuid]
 
   db
   .query(query, values)
