@@ -176,7 +176,7 @@ exports.getGroupMembers = async (req, res, next) => {
       first.*, users.username
   FROM
       users
-  JOIN first on first.user_id = users.user_id`
+  JOIN first on first.user_id = users.uuid`
 
   db
     .query(query)
