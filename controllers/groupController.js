@@ -133,8 +133,6 @@ exports.add = async (req, res, next) => {
       VALUES
         ('${uuid}', '${owner_id}', true, NOW(), NOW());`;
 
-      console.log(query)
-
       db
         .query(query)
         .then(() => {
@@ -168,7 +166,7 @@ exports.edit = async (req, res, next) => {
     SET
       group_name = $2, 
       group_options = $3,
-      format_options = $4
+      format_options = $4,
       sharing_enabled = $5, 
       updated_at = NOW()
     WHERE
