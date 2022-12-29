@@ -98,6 +98,8 @@ exports.add = async (req, res, next) => {
   db
     .query(query, values)
     .then((response) => {
+      console.log('response')
+      console.log(response)
       const listsFiltered = lists.map(function(item){
       
         return {
