@@ -159,6 +159,7 @@ exports.edit = async (req, res, next) => {
   let uuid = req.body.packet.share_uuid;
   let group_name = req.body.packet.group_name;
   let group_options = req.body.packet.group_options;
+  let format_options = req.body.packet.format_options;
   let sharing_enabled = req.body.packet.sharing_enabled;
 
   let query = `
