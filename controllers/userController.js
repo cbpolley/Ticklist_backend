@@ -108,6 +108,7 @@ exports.add = async (req, res, next) => {
 
       let username = randomSlug.generateSlug(2, { format: "title" })
 
+      var jwt = require('jsonwebtoken');
       var token = jwt.sign({username:username, password:hash}, process.env.token_secret);
 
       let query = `
@@ -116,7 +117,8 @@ exports.add = async (req, res, next) => {
       VALUES ($1, $2, $3, $4, 'free', NOW(), NOW())
       RETURNING uuid, username, email, token;`
 
-      
+      console.log(query)
+
       let values = [email, username, hash, token]
       console.log(query)
       console.log(values)
