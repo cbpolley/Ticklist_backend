@@ -85,7 +85,6 @@ exports.add = async (req, res, next) => {
   db
   .query(query, values)
   .then(async (response) => {
-    console.log(response)
     if (response.rows.length > 0) {
       // email account already exists on the database, cancel the user add process and inform user
       res.status(200).send({
@@ -93,7 +92,6 @@ exports.add = async (req, res, next) => {
         'existing_email':'true'
       })
     } else {
-      console.log('else')
       // email account does not already exist, proceed with user add process
       const hashPassword = async (password, saltRounds = 10) => {
         try {
@@ -108,15 +106,9 @@ exports.add = async (req, res, next) => {
       // don't store plaintext passwords in the database
       let hash = await hashPassword(plain_password);
 
-      console.log(hash)
-
       let username = randomSlug.generateSlug(2, { format: "title" })
 
-      console.log(username)
-
-      var token = jwt.sign([user_id, hash, false], process.env.token_secret);
-
-      console.log(token)
+      var token = jwt.sign([username, hash, false], process.env.token_secret);
 
       let query = `
       INSERT INTO 
@@ -125,9 +117,6 @@ exports.add = async (req, res, next) => {
       RETURNING user_id, username, email, token;`
 
       let values = [email, username, hash, token]
-
-      console.log(query)
-      console.log(values)
 
       db
         .query(query, values)
