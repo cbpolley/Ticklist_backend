@@ -108,15 +108,15 @@ exports.add = async (req, res, next) => {
 
       let username = randomSlug.generateSlug(2, { format: "title" })
 
-      var token = jwt.sign([user_id, hashPassword, false], process.env.token_secret);
+      var token = jwt.sign([user_id, hash, false], process.env.token_secret);
 
       let query = `
       INSERT INTO 
         users (email, username, password, user_type, token, created_at, updated_at) 
-      VALUES ($1, $2, $3, 'free', $5, NOW(), NOW())
+      VALUES ($1, $2, $3, $4, 'free', NOW(), NOW())
       RETURNING user_id, username, email, token`
 
-      let values = [email, username, hash, user_type, token]
+      let values = [email, username, hash, token]
 
       db
         .query(query, values)
