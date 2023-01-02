@@ -108,9 +108,7 @@ exports.add = async (req, res, next) => {
 
       let username = randomSlug.generateSlug(2, { format: "title" })
 
-      var token = jwt.sign([username, hash, false], process.env.token_secret);
-
-      console.log(token)
+      var token = jwt.sign({username:username, password:hash}, process.env.token_secret);
 
       let query = `
       INSERT INTO 
