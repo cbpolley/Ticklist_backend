@@ -6,8 +6,6 @@ const stripe = require('stripe')(process.env.stripe_key);
 
 exports.getPaymentIntent = async (req, res, next) => {
 
-    console.log(req)
-
     const annual_cost = 199;
 
     let user_id = req.params.uuid;
@@ -19,23 +17,24 @@ exports.getPaymentIntent = async (req, res, next) => {
     .query(query, values)
     .then( async (response) => {
 
-        console.log(response)
-
         let user_details = response.rows[0];
 
         const customer = await stripe.customers.create(
             {
                 email: user_details.email
             }
-        ).catch((err) => {console.log('stripe1. ' + err)})
-
-        console.log('customer')
-        console.log(customer)
+        ).catch((err) => {
+          console.log('stripe1. ' + err)
+          res.status(200).send({status: 'fail', reason: err})
+        })
 
         const ephemeralKey = await stripe.ephemeralKeys.create(
             {customer: customer.id},
             {apiVersion: process.env.stripe_api_version}
-            ).catch((err) => {console.log('stripe2. ' + err)})
+            ).catch((err) => {
+              console.log('stripe2. ' + err)
+              res.status(200).send({status: 'fail', reason: err})
+            })
 
         console.log('ephemeralKey')
         console.log(ephemeralKey)
