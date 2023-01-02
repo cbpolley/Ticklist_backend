@@ -129,7 +129,7 @@ exports.shareWithUsernames = async (req, res, next) => {
 
 exports.getSharedGroups = async (req, res, next) => {
 
-  let user_id = req.params.id;
+  let user_uuid = req.params.uuid;
 
   let query = `
     SELECT
@@ -138,7 +138,7 @@ exports.getSharedGroups = async (req, res, next) => {
       sharing
     WHERE
       user_id = $1`
-  let values = [user_id]
+  let values = [user_uuid]
 
   db
     .query(query, values)

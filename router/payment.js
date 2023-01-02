@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
   res.send('Payment Home')
 })
 
-router.get('/intent/single/:id', paymentController.getPaymentIntent);
+router.get('/intent/single/:uuid', paymentController.getPaymentIntent);
 router.get('/previous/single/:id', paymentController.getPrevious);
 router.post('/edit', paymentController.updatePaymentRecords);
 

@@ -10,9 +10,9 @@ exports.getPaymentIntent = async (req, res, next) => {
 
     const annual_cost = 199;
 
-    let user_id = req.params.id;
+    let user_id = req.params.uuid;
 
-    let query = 'SELECT email FROM users WHERE user_id = $1'
+    let query = 'SELECT email FROM users WHERE uuid = $1'
     let values = [user_id]
   
     db
