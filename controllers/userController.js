@@ -128,10 +128,14 @@ exports.add = async (req, res, next) => {
         .then(response => {
           res.status(200).send({
             status:'success',
-            user_id: response.rows[0].user_id,
-            username: response.rows[0].username,
-            email: response.rows[0].email,
-            token: response.rows[0].token
+            user:{
+              uuid: response.rows[0].uuid,
+              username: response.rows[0].username,
+              email: response.rows[0].email,
+            },
+            token: response.rows[0].token,
+            payment_period_end:null,
+            payment_valid:false,
           })
         })
         .catch(err => {
