@@ -111,17 +111,34 @@ exports.add = async (req, res, next) => {
       var jwt = require('jsonwebtoken');
       var token = jwt.sign({username:username, password:hash}, process.env.token_secret);
 
+      const { v4: uuidv4 } = require('uuid');
+
+      let uuid = uuidv4();
+    
+      let uuid_query = `SELECT * FROM users where uuid = '${uuid}'`;
+    
+      let uuid_exists = true;
+    
+      do {
+        await db
+          .query(uuid_query)
+          .then((response) => {
+            if (response.rows.length < 1){
+              uuid_exists = false;
+            } else {
+              uuid = uuidv4();
+            }
+          })
+        
+      } while (uuid_exists === true);    
+
       let query = `
       INSERT INTO 
-        users (email, username, password, token, user_type, created_at, updated_at) 
-      VALUES ($1, $2, $3, $4, 'free', NOW(), NOW())
+        users (email, username, password, token, uuid, user_type, created_at, updated_at) 
+      VALUES ($1, $2, $3, $4, $5, 'free', NOW(), NOW())
       RETURNING uuid, username, email, token;`
 
-      console.log(query)
-
-      let values = [email, username, hash, token]
-      console.log(query)
-      console.log(values)
+      let values = [email, username, hash, token, uuid]
 
       db
         .query(query, values)
