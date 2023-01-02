@@ -78,7 +78,6 @@ exports.add = async (req, res, next) => {
   // first check to see if user exists
 
   let email = req.body.packet.email;
-  let user_type = req.body.packet.user_type;
   let plain_password = req.body.packet.password;
   let query = 'SELECT email FROM users WHERE email = $1'
   let values = [email]
@@ -114,7 +113,7 @@ exports.add = async (req, res, next) => {
       let query = `
       INSERT INTO 
         users (email, username, password, user_type, token, created_at, updated_at) 
-      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      VALUES ($1, $2, $3, 'free', $5, NOW(), NOW())
       RETURNING user_id, username, email, token`
 
       let values = [email, username, hash, user_type, token]
