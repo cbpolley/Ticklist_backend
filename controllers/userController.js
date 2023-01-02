@@ -110,13 +110,18 @@ exports.add = async (req, res, next) => {
 
       var token = jwt.sign([username, hash, false], process.env.token_secret);
 
+      console.log(token)
+
       let query = `
       INSERT INTO 
         users (email, username, password, token, user_type, created_at, updated_at) 
       VALUES ($1, $2, $3, $4, 'free', NOW(), NOW())
-      RETURNING user_id, username, email, token;`
+      RETURNING uuid, username, email, token;`
 
+      
       let values = [email, username, hash, token]
+      console.log(query)
+      console.log(values)
 
       db
         .query(query, values)
