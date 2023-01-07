@@ -9,7 +9,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/intent/single/:uuid', paymentController.getPaymentIntent);
-router.get('/previous/single/:id', paymentController.getPrevious);
+router.get('/previous/single/:uuid', paymentController.getPrevious);
 router.post('/edit', paymentController.updatePaymentRecords);
 
 module.exports = router
