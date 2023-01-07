@@ -14,6 +14,7 @@ exports.getSingle = async (req, res, next) => {
 
   let query = `
     SELECT 
+      uuid,
       username, 
       email, 
       user_type
