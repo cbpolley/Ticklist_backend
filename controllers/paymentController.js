@@ -102,8 +102,7 @@ exports.getPrevious = async (req, res, next) => {
   
   let query = `
     SELECT
-      payment_period_end,
-      case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
+      payment_period_end    
     FROM
       payment
     WHERE user_uuid = ${user_uuid};`
