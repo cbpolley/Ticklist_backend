@@ -8,17 +8,25 @@ exports.getSingle = async (req, res, next) => {
 
   let uuid = req.params.uuid
 
+  console.log('get single user')
+  console.log(req.params)
+  console.log(uuid)
+
   let query = `
     SELECT 
       username, 
       email, 
       user_type,
-      FROM users WHERE uuid = $1`
+    FROM 
+      users 
+    WHERE uuid = $1`
   let values = [uuid]
 
   db
   .query(query, values)
   .then(response => {
+    console.log('get single user response')
+    console.log(response)
     res.status(200).send(response.rows)
   })
   .catch(err => {
