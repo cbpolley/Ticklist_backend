@@ -8,10 +8,10 @@ exports.getPaymentIntent = async (req, res, next) => {
 
     const annual_cost = 199;
 
-    let user_id = req.params.uuid;
+    let uuid = req.params.uuid;
 
     let query = 'SELECT email FROM users WHERE uuid = $1'
-    let values = [user_id]
+    let values = [uuid]
   
     db
     .query(query, values)
@@ -73,11 +73,11 @@ exports.updatePaymentRecords = async (req, res, next) => {
     let amount_paid = req.body.packet.amount_paid
     let vendor_id = req.body.packet.vendor_id
     const time = Date.now().toString();
-    let receipt_id = "tl" + user_id + time.slice(time.length - 4)
+    let receipt_id = "tl" + uuid + time.slice(time.length - 4)
     
     let query = `
       INSERT INTO
-        payment (uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
+        payment (user_uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
       VALUES 
         ($1, $2, $3, $4, $5, $6, NOW(), NOW())
       RETURNING payment_id`
@@ -96,7 +96,7 @@ exports.updatePaymentRecords = async (req, res, next) => {
   
 exports.getPrevious = async (req, res, next) => {
 
-  let user_id = req.params.id
+  let user_uuid = req.params.uuid
   
   let query = `
     SELECT
@@ -104,7 +104,7 @@ exports.getPrevious = async (req, res, next) => {
       case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
     FROM
       payment
-    WHERE user_id = ${user_id}`
+    WHERE user_uuid = ${user_uuid}`
 
   db
     .query(query)
