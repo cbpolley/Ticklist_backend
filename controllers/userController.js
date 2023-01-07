@@ -16,7 +16,7 @@ exports.getSingle = async (req, res, next) => {
     SELECT 
       username, 
       email, 
-      user_type,
+      user_type
     FROM 
       users 
     WHERE uuid = $1`
