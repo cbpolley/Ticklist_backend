@@ -105,7 +105,7 @@ exports.getPrevious = async (req, res, next) => {
       payment_period_end    
     FROM
       payment
-    WHERE user_uuid = ${user_uuid};`
+    WHERE user_uuid = '${user_uuid}';`
 
   db
     .query(query)
