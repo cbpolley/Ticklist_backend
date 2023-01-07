@@ -35,9 +35,6 @@ exports.getPaymentIntent = async (req, res, next) => {
               console.log('stripe2. ' + err)
               res.status(200).send({status: 'fail', reason: err})
             })
-
-        console.log('ephemeralKey')
-        console.log(ephemeralKey)
     
         const paymentIntent = await stripe.paymentIntents.create({
             amount: annual_cost,
@@ -48,13 +45,7 @@ exports.getPaymentIntent = async (req, res, next) => {
               },
           })
 
-          console.log('paymentIntent')
-          console.log(paymentIntent)
-    
         const setupIntent = await stripe.setupIntents.create({usage: 'on_session'});
-
-        console.log('setupIntent')
-        console.log(setupIntent)
 
         res.status(200).send({
             status: 'success', 
@@ -76,7 +67,7 @@ exports.getPaymentIntent = async (req, res, next) => {
 
 exports.updatePaymentRecords = async (req, res, next) => {
 
-    let user_id = req.body.packet.user_id
+    let uuid = req.body.packet.uuid
     let payment_period_start = new Date(Date.now())
     let payment_period_end = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
     let amount_paid = req.body.packet.amount_paid
@@ -86,12 +77,12 @@ exports.updatePaymentRecords = async (req, res, next) => {
     
     let query = `
       INSERT INTO
-        payment (user_id, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
+        payment (uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
       VALUES 
         ($1, $2, $3, $4, $5, $6, NOW(), NOW())
       RETURNING payment_id`
 
-    let values = [user_id, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id]
+    let values = [uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id]
   
     db
       .query(query, values)
