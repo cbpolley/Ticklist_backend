@@ -112,7 +112,7 @@ exports.getPrevious = async (req, res, next) => {
     .then((dbRes) => {
       res.status(200).send(dbRes.rows)
     })
-    .catch(() => {
+    .catch((err) => {
       res.status(501).send({
         'Database Error': err
       })
