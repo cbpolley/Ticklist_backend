@@ -9,7 +9,7 @@ router.get('/', function(req, res) {
   res.send('Users Home')
 })
 
-router.get('/single/:id', userController.getSingle);
+router.get('/single/:uuid', userController.getSingle);
 router.get('/all', userController.getAll);
 router.post('/add', userController.add);
 router.post('/edit', userController.edit);
