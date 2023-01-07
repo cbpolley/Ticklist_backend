@@ -78,17 +78,18 @@ exports.updatePaymentRecords = async (req, res, next) => {
     
     let query = `
     INSERT INTO
-    payment (user_uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
+      payment (user_uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id, created_at, updated_at)
     VALUES 
-    ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-    RETURNING payment_id`
+      ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+    RETURNING 
+      payment_period_end;`
     
     let values = [uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id]
   
     db
       .query(query, values)
-      .then(() => {
-        res.status(200).send({status:'Success'})
+      .then((response) => {
+        res.status(200).send({status:'Success', payment_period_end: response.rows[0].payment_period_end})
       })
       .catch(() => {
         res.status(501).send({status:'Failed to update payment records'})
@@ -105,7 +106,7 @@ exports.getPrevious = async (req, res, next) => {
       case when now() >= payment.payment_period_start and now() <= payment_period_end then true else false end as payment_valid
     FROM
       payment
-    WHERE user_uuid = ${user_uuid}`
+    WHERE user_uuid = ${user_uuid};`
 
   db
     .query(query)
