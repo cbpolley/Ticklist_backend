@@ -85,8 +85,13 @@ exports.checkUser = async (req, res, next) => {
 
   let token = req.params.token
 
+  console.log('token')
+  console.log(token)
+
   try{
     var decoded = jwt.verify(token, process.env.token_secret);
+    console.log('decoded')
+    console.log(decoded)
     res.status(200).send({
       uuid: decoded.uuid,
       payment_period_end: decoded.payment_period_end,
@@ -94,6 +99,7 @@ exports.checkUser = async (req, res, next) => {
     })
   }
   catch{
+    console.log('fail')
     res.status(500).send({
       'user_details': 'invalid_token'
     })
