@@ -10,6 +10,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/single/:uuid', userController.getSingle);
+localResponse[0]
 router.get('/all', userController.getAll);
 router.post('/add', userController.add);
 router.post('/edit', userController.edit);
