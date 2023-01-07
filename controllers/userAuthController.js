@@ -11,17 +11,17 @@ exports.login = async (req, res, next) => {
 
   let query = `
   with user_details as (
-    SELECT user_id, password FROM users WHERE email = '${email}'
+    SELECT uuid, password FROM users WHERE email = '${email}'
   )
 
   select
-      user_details.user_id,
+      user_details.user_uuid,
       user_details.password,
       payment_period_end,
       case when now() >= payment.payment_period_start and now() <= payment_period_end then 1 else 0 end as payment_valid
   from
       payment
-  right join user_details on user_details.user_id = payment.user_id`;
+  right join user_details on user_details.uuid = payment.user_uuid`;
 
   db
     .query(query)
@@ -44,9 +44,9 @@ exports.login = async (req, res, next) => {
                             SET
                               token = $1, updated_at = NOW()
                             WHERE
-                              user_id = $2
+                              uuid = $2
                             RETURNING uuid, email, username, user_type;`
-            let valuesTwo = [token, dbRes.rows[0].user_id]
+            let valuesTwo = [token, dbRes.rows[0].uuid]
 
             db
               .query(queryTwo, valuesTwo)
