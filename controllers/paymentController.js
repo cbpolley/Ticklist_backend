@@ -67,13 +67,11 @@ exports.getPaymentIntent = async (req, res, next) => {
 
 exports.updatePaymentRecords = async (req, res, next) => {
 
-    console.log(req.body)
-
-    let uuid = req.body.uuid
+    let uuid = req.body.packet.uuid
     let payment_period_start = new Date(Date.now())
     let payment_period_end = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-    let amount_paid = req.body.amount_paid
-    let vendor_id = req.body.vendor_id
+    let amount_paid = req.body.packet.amount_paid
+    let vendor_id = req.body.packet.vendor_id
     const time = Date.now().toString();
     let receipt_id = "tl" + uuid + time.slice(time.length - 4)
 
@@ -84,7 +82,6 @@ exports.updatePaymentRecords = async (req, res, next) => {
     VALUES 
     ($1, $2, $3, $4, $5, $6, NOW(), NOW())
     RETURNING payment_id`
-    console.log(query)
     
     let values = [uuid, payment_period_start, payment_period_end, amount_paid, vendor_id, receipt_id]
   
