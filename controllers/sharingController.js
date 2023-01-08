@@ -86,6 +86,9 @@ exports.shareWithUsernames = async (req, res, next) => {
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
   let share_uuid = req.body.packet.share_uuid
 
+  console.log('req.body')
+  console.log(req.body)
+
   console.log('usernames')
   console.log(usernames)
   
@@ -101,7 +104,7 @@ exports.shareWithUsernames = async (req, res, next) => {
         const pin_query = `
         INSERT INTO
           sharing (uuid, user_id, username, access_pin, is_member, access_pin_expire, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, false, NOW() + (10 * interval '1 minute'), NOW(), NOW());`
+        VALUES ($1, $2, $3, $4, false, NOW() + (10 * interval '1 minute'), NOW(), NOW());`
         let values = [share_uuid, response.rows[i].uuid, response.rows[i].username, pin]
 
         db
