@@ -160,8 +160,8 @@ exports.edit = async (req, res, next) => {
   console.log(req.body)
 
   let list_id = req.body.packet.list_id;
-  let list_contents = req.body.packet.list_contents;
-  let format_options = req.body.packet.format_options;
+  let list_contents = JSON.stringify(req.body.packet.list_contents);
+  let format_options = JSON.stringify(req.body.packet.format_options);
   let completed_percent = req.body.packet.completed_percent;
   let list_name = req.body.packet.list_name;
   let color = req.body.packet.color;
