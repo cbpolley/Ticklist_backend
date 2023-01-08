@@ -14,7 +14,7 @@ exports.confirmGroupMember = async (req, res, next) => {
     updated_at = NOW()
   WHERE 
     access_pin = ${access_pin} and 
-    user_id = ${user_uuid} and 
+    user_id = '${user_uuid}' and 
     NOW() < access_pin_expire
   RETURNING 
     uuid;`;
@@ -33,7 +33,7 @@ exports.confirmGroupMember = async (req, res, next) => {
           FROM 
             groups
           WHERE
-            share_uuid = ${share_uuid};`;
+            share_uuid = '${share_uuid}';`;
           
           db
             .query(groupQuery)
