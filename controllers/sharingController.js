@@ -78,16 +78,18 @@ exports.shareWithUsernames = async (req, res, next) => {
 
   let userArray = req.body.packet.usernames.reduce((filter, obj) => { 
     if (obj.value && obj.value.length > 0){
-      filter.push(obj.value)
+      filter.push(obj.value.toLowerCase().trim())
     }
     return filter  
   }, [])
 
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
   let share_uuid = req.body.packet.share_uuid
-  
 
-  const id_query = `select user_id, username from users where username in ${usernames}`
+  console.log('usernames')
+  console.log(usernames)
+  
+  const id_query = `select user_id, username from users where LOWER(username) in ${usernames}`
 
   db
   .query(id_query)
