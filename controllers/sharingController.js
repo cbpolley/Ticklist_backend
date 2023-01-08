@@ -3,7 +3,7 @@ const db = require('../db/index.js')
 
 exports.confirmGroupMember = async (req, res, next) => {
 
-  let user_id = req.body.packet.user_id;
+  let user_uuid = req.body.packet.user_uuid;
   let access_pin = req.body.packet.access_pin
 
   let query = `
@@ -14,7 +14,7 @@ exports.confirmGroupMember = async (req, res, next) => {
     updated_at = NOW()
   WHERE 
     access_pin = ${access_pin} and 
-    user_id = ${user_id} and 
+    user_id = ${user_uuid} and 
     NOW() < access_pin_expire
   RETURNING 
     uuid;`;
