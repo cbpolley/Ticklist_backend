@@ -68,14 +68,14 @@ exports.add = async (req, res, next) => {
 
   let list_contents = req.body.packet.list_contents;
   let list_name = req.body.packet.list_name;
-  let group_id = req.body.packet.group_id;
+  let share_uuid = req.body.packet.share_uuid;
   let color = req.body.packet.color;
 
   let query = `
   INSERT INTO 
-  lists (list_name, group_id, list_contents, color, created_at, updated_at) 
+  lists (list_name, share_uuid, list_contents, color, created_at, updated_at) 
   VALUES ($1, $2, $3, $4, NOW(), NOW())`
-  let values = [list_name, group_id, list_contents, color]
+  let values = [list_name, share_uuid, list_contents, color]
 
   db
     .query(query, values)

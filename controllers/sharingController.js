@@ -23,17 +23,17 @@ exports.confirmGroupMember = async (req, res, next) => {
     .query(query)
     .then(response => {
       if (response.rows.length > 0){
-        const uuid = response.rows[0].uuid
+        const share_uuid = response.rows[0].uuid
         let groupQuery = `
           SELECT 
             owner_name,
             group_name,
             group_options,
-            uuid as group_id
+            share_uuid
           FROM 
             groups
           WHERE
-            uuid = ${uuid};`;
+            share_uuid = ${share_uuid};`;
           
           db
             .query(groupQuery)
@@ -57,10 +57,10 @@ exports.confirmGroupMember = async (req, res, next) => {
 }
 
 exports.getSharingStatus = async (req, res, next) => {
-  const uuid = req.body.uuid
+  const share_uuid = req.share_uuid.uuid
 
   const query = `
-    SELECT * from GROUPS where uuid = '${uuid}'`
+    SELECT * from GROUPS where share_uuid = '${share_uuid}'`
 
     db
   .query(query)
@@ -84,7 +84,7 @@ exports.shareWithUsernames = async (req, res, next) => {
   }, [])
 
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
-  let uuid = req.body.packet.uuid
+  let share_uuid = req.body.packet.share_uuid
   
 
   const id_query = `select user_id, username from users where username in ${usernames}`
@@ -100,7 +100,7 @@ exports.shareWithUsernames = async (req, res, next) => {
         INSERT INTO
           sharing (uuid, user_id, username, access_pin, is_member, access_pin_expire, created_at, updated_at)
           VALUES ($1, $2, $3, $4, false, NOW() + (10 * interval '1 minute'), NOW(), NOW());`
-        let values = [uuid, response.rows[i].user_id, response.rows[i].username, pin]
+        let values = [share_uuid, response.rows[i].user_id, response.rows[i].username, pin]
 
         db
         .query(pin_query, values)

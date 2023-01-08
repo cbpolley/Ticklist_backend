@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
   res.send('Groups Home')
 })
 
-router.get('/single/:uuid', groupController.getSingle);
+router.get('/single/:share_uuid', groupController.getSingle);
 router.get('/multiple/:id', groupController.getMultiple);
 router.get('/all', groupController.getAll);
 router.post('/add', groupController.add);

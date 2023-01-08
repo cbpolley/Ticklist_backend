@@ -3,10 +3,10 @@ const db = require('../db/index.js')
 
 exports.getSingle = async (req, res, next) => {
 
-  let uuid = req.params.uuid
+  let share_uuid = req.params.share_uuid
 
-  let query = 'SELECT * FROM groups WHERE uuid = $1'
-  let values = [uuid]
+  let query = 'SELECT * FROM groups WHERE share_uuid = $1'
+  let values = [share_uuid]
 
   db
   .query(query, values)
@@ -68,9 +68,9 @@ exports.add = async (req, res, next) => {
 
   const { v4: uuidv4 } = require('uuid');
 
-  let uuid = uuidv4();
+  let share_uuid = uuidv4();
 
-  let uuid_query = `SELECT * FROM groups where uuid = '${uuid}'`;
+  let uuid_query = `SELECT * FROM groups where share_uuid = '${share_uuid}'`;
 
   let uuid_exists = true;
 
@@ -78,12 +78,10 @@ exports.add = async (req, res, next) => {
     await db
       .query(uuid_query)
       .then((response) => {
-        console.log('uuid res')
-        console.log(response)
         if (response.rows.length < 1){
           uuid_exists = false;
         } else {
-          uuid = uuidv4();
+          share_uuid = uuidv4();
         }
       })
     
@@ -91,11 +89,11 @@ exports.add = async (req, res, next) => {
   
   let query = `
   INSERT INTO groups 
-    (owner_id, uuid, group_name, group_options, created_at, updated_at) 
+    (owner_id, share_uuid, group_name, group_options, created_at, updated_at) 
   VALUES 
     ($1, $2, $3, $4, NOW(), NOW());`;
 
-  let values = [owner_id, uuid, group_name, group_options]
+  let values = [owner_id, share_uuid, group_name, group_options]
 
   console.log(query)
   console.log(values)
@@ -103,14 +101,12 @@ exports.add = async (req, res, next) => {
   db
     .query(query, values)
     .then((response) => {
-      console.log('response')
-      console.log(response)
       const listsFiltered = lists.map(function(item){
       
         return {
           list_contents: item.list_contents,
           list_name : item.list_name,
-          uuid: uuid,
+          share_uuid: share_uuid,
           format_options: item.list_contents,
           color:item.color,
           completed_percent:item.completed_percent
@@ -122,21 +118,21 @@ exports.add = async (req, res, next) => {
 
       let query = `
       INSERT INTO
-        lists (list_contents, list_name, uuid, format_options, color, completed_percent, created_at, updated_at)
+        lists (list_contents, list_name, share_uuid, format_options, color, completed_percent, created_at, updated_at)
       SELECT
-        list_contents, list_name, uuid, format_options, color, completed_percent, NOW(), NOW()
+        list_contents, list_name, share_uuid, format_options, color, completed_percent, NOW(), NOW()
       FROM
         json_populate_recordset(null::lists, '${listsJSON}');
         
       INSERT INTO
         sharing (uuid, user_id, is_member, created_at, updated_at)
       VALUES
-        ('${uuid}', '${owner_id}', true, NOW(), NOW());`;
+        ('${share_uuid}', '${owner_id}', true, NOW(), NOW());`;
 
       db
         .query(query)
         .then(() => {
-          res.status(200).send({'uuid': uuid})
+          res.status(200).send({'share_uuid': share_uuid})
         })
         .catch(err => {
           res.status(501).send({
@@ -154,7 +150,7 @@ exports.add = async (req, res, next) => {
 
 exports.edit = async (req, res, next) => {
 
-  let uuid = req.body.packet.share_uuid;
+  let share_uuid = req.body.packet.share_uuid;
   let group_name = req.body.packet.group_name;
   let group_options = req.body.packet.group_options;
   let format_options = req.body.packet.format_options;
@@ -170,7 +166,7 @@ exports.edit = async (req, res, next) => {
       sharing_enabled = $5, 
       updated_at = NOW()
     WHERE
-      uuid = $1
+      share_uuid = $1
     RETURNING *`
   let values = [uuid, group_name, group_options, format_options, sharing_enabled]
 
@@ -189,9 +185,9 @@ exports.edit = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
 
-  const group_id = req.params.id
+  const share_uuid = req.params.share_uuid
 
-  let query = 'DELETE FROM groups WHERE group_id = $1'
+  let query = 'DELETE FROM groups WHERE share_uuid = $1'
   let values = [group_id]
 
   db
