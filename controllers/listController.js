@@ -157,6 +157,8 @@ exports.groupUpdate = async (req, res, next) => {
 }
 exports.edit = async (req, res, next) => {
 
+  console.log(req.body)
+
   let list_id = req.body.packet.list_id;
   let list_contents = req.body.packet.list_contents;
   let format_options = req.body.packet.format_options;
@@ -182,9 +184,11 @@ exports.edit = async (req, res, next) => {
   db
     .query(query, values)
     .then(response => {
+      console.log(response)
       res.status(200).send(response.rows)
     })
     .catch(err => {
+      console.log(err)
       res.status(501).send({
         'Database Error': err
       })
