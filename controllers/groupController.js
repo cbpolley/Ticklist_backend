@@ -7,44 +7,39 @@ exports.getSingle = async (req, res, next) => {
 
   let query = `
   with group_lists as (
-    select * from lists where share_uuid = $1
-  )
-
-  SELECT group_id,
-        owner_id,
-        group_name,
-        group_options,
-        groups.created_at,
-        groups.share_uuid,
-        owner_name,
-        sharing_enabled,
-        groups.format_options,
+    select
         json_agg(
-          json_build_object(
-          'list_id', list_id,
-          'created_at', l.created_at,
-          'updated_at', l.updated_at,
-          'list_name', list_name,
-          'share_uuid', l.share_uuid,
-          'format_options', l.format_options,
-          'color', color,
-          'completed_percent', completed_percent
-          )
-        ) as lists
-  FROM groups
-    left join group_lists l on groups.share_uuid = l.share_uuid
-  WHERE 
-    groups.share_uuid = $1
-  GROUP BY 
-    group_id,
-    owner_id,
-    group_name,
-    group_options,
-    groups.created_at,
-    groups.share_uuid,
-    owner_name,
-    sharing_enabled,
-    groups.format_options 
+           json_build_object(
+           'list_id', list_id,
+            'created_at', created_at,
+           'updated_at', updated_at,
+           'list_name', list_name,
+           'share_uuid', share_uuid,
+           'format_options', format_options,
+           'color', color,
+           'completed_percent', completed_percent
+           )
+        ) as  agg_lists,
+        share_uuid
+    from 
+        lists 
+    where share_uuid = $1
+    group by share_uuid
+)
+
+SELECT group_id,
+       owner_id,
+       group_name,
+       group_options,
+       groups.created_at,
+       groups.share_uuid,
+       owner_name,
+       sharing_enabled,
+       groups.format_options,
+        group_lists.agg_lists as lists
+FROM groups
+left join group_lists on groups.share_uuid = group_lists.share_uuid
+WHERE groups.share_uuid = $1
   `
   let values = [share_uuid]
 
