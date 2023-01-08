@@ -89,7 +89,7 @@ exports.shareWithUsernames = async (req, res, next) => {
   console.log('usernames')
   console.log(usernames)
   
-  const id_query = `select user_id, username from users where LOWER(username) in ${usernames}`
+  const id_query = `select uuid, username from users where LOWER(username) in ${usernames}`
 
   db
   .query(id_query)
@@ -102,7 +102,7 @@ exports.shareWithUsernames = async (req, res, next) => {
         INSERT INTO
           sharing (uuid, user_id, username, access_pin, is_member, access_pin_expire, created_at, updated_at)
           VALUES ($1, $2, $3, $4, false, NOW() + (10 * interval '1 minute'), NOW(), NOW());`
-        let values = [share_uuid, response.rows[i].user_id, response.rows[i].username, pin]
+        let values = [share_uuid, response.rows[i].uuid, response.rows[i].username, pin]
 
         db
         .query(pin_query, values)
