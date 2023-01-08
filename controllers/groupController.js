@@ -5,7 +5,47 @@ exports.getSingle = async (req, res, next) => {
 
   let share_uuid = req.params.share_uuid
 
-  let query = 'SELECT * FROM groups WHERE share_uuid = $1'
+  let query = `
+  with group_lists as (
+    select * from lists where share_uuid = $1
+  )
+
+  SELECT group_id,
+        owner_id,
+        group_name,
+        group_options,
+        groups.created_at,
+        groups.share_uuid,
+        owner_name,
+        sharing_enabled,
+        groups.format_options,
+        json_agg(
+          json_build_object(
+          'list_id', list_id,
+          'created_at', l.created_at,
+          'updated_at', l.updated_at,
+          'list_name', list_name,
+          'share_uuid', l.share_uuid,
+          'format_options', l.format_options,
+          'color', color,
+          'completed_percent', completed_percent
+          )
+        ) as lists
+  FROM groups
+    left join group_lists l on groups.share_uuid = l.share_uuid
+  WHERE 
+    groups.share_uuid = $1
+  GROUP BY 
+    group_id,
+    owner_id,
+    group_name,
+    group_options,
+    groups.created_at,
+    groups.share_uuid,
+    owner_name,
+    sharing_enabled,
+    groups.format_options 
+  `
   let values = [share_uuid]
 
   db
