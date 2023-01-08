@@ -66,20 +66,17 @@ exports.getAll = async (req, res, next) => {
 
 exports.add = async (req, res, next) => {
 
-  const share_uuid = req.body.packet.share_uuid;
-
-  const list_contents = req.body.packet.list.list_contents;
-  const format_options = req.body.packet.list.format_options;
   const list_name = req.body.packet.list.list_name;
-  const color = req.body.packet.list.color;
+  const share_uuid = req.body.packet.share_uuid;
+  const color = req.body.packet.color;
 
   const query = `
   INSERT INTO 
-    lists (list_name, share_uuid, list_contents, color, format_options, completed_percent, created_at, updated_at) 
+    lists (list_name, share_uuid, color, list_contents, format_options, completed_percent, created_at, updated_at) 
   VALUES 
     ($1, $2, $3, '[]', '[]', 0, NOW(), NOW())`
 
-    const values = [list_name, share_uuid, list_contents, color, format_options]
+    const values = [list_name, share_uuid, color]
 
   db
     .query(query, values)
