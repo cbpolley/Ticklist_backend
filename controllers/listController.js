@@ -86,7 +86,7 @@ exports.add = async (req, res, next) => {
   INSERT INTO 
     lists (list_name, share_uuid, color, format_options, list_contents, completed_percent, created_at, updated_at) 
   VALUES 
-    ($1, $2, $3, $4, '"[]"', 0, NOW(), NOW())`
+    ($1, $2, $3, $4, '[]', 0, NOW(), NOW())`
 
   console.log(query)
 
