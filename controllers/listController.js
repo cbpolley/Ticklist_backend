@@ -89,6 +89,57 @@ exports.add = async (req, res, next) => {
     })
 }
 
+exports.groupUpdate = async (req, res, next) => {
+
+  const share_uuid = req.body.packet.share_uuid
+
+  const lists = req.body.packet.lists
+
+  const listsJSON = JSON.stringify(lists.flat())
+
+  console.log('listsJSON')
+  console.log(listsJSON)
+
+  let query = `
+  INSERT INTO
+    lists (list_contents, list_name, uuid, format_options, color, completed_percent, updated_at, created_at)
+  SELECT
+    list_contents, list_name, uuid, format_options, color, completed_percent, NOW(), NOW()
+  FROM
+    json_populate_recordset(null::lists, '${listsJSON}')`;
+
+  await db
+    .query(`select * from lists where share_uuid = ${share_uuid}`)
+    .then((response) =>{
+      if (response.rows > 1){
+        query = `
+        UPDATE 
+          lists 
+        SET 
+          (list_contents, list_name, uuid, format_options, color, completed_percent, updated_at, created_at) = 
+          ((select list_contents, list_name, uuid, format_options, color, completed_percent, NOW(), NOW() from json_populate_record(NULL::lists,'${listsJSON}'))
+          `
+      } 
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  console.log('query')
+  console.log(query)
+
+  db
+    .query(query)    
+    .then(response => {
+      res.status(200).send(response.rows)
+    })
+    .catch(err => {
+      res.status(501).send({
+        'Database Error': err
+      })
+    })
+
+}
 exports.edit = async (req, res, next) => {
 
   let list_id = req.body.packet.list_id;

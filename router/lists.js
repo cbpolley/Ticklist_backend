@@ -13,6 +13,7 @@ router.post('/multiple', listController.getMultiple);
 router.get('/all', listController.getAll);
 router.post('/add', listController.add);
 router.post('/edit', listController.edit);
+router.post('/group', listController.groupUpdate);
 router.delete('/delete/:id', listController.delete);
 
 module.exports = router

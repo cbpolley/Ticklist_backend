@@ -86,12 +86,6 @@ exports.shareWithUsernames = async (req, res, next) => {
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
   let share_uuid = req.body.packet.share_uuid
 
-  console.log('req.body')
-  console.log(req.body)
-
-  console.log('usernames')
-  console.log(usernames)
-  
   const id_query = `select uuid, username from users where LOWER(username) in ${usernames}`
 
   db
