@@ -73,13 +73,14 @@ exports.add = async (req, res, next) => {
 
   let query = `
   INSERT INTO 
-  lists (list_name, share_uuid, list_contents, color, created_at, updated_at) 
-  VALUES ($1, $2, $3, $4, NOW(), NOW())`
+    lists (list_name, share_uuid, list_contents, color, created_at, updated_at) 
+  VALUES 
+    ($1, $2, $3, $4, NOW(), NOW())`
   let values = [list_name, share_uuid, list_contents, color]
 
   db
     .query(query, values)
-    .then(response => {
+    .then(() => {
       res.status(200).send('success')
     })
     .catch(err => {
