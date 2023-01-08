@@ -168,7 +168,7 @@ exports.edit = async (req, res, next) => {
     WHERE
       share_uuid = $1
     RETURNING *`
-  let values = [uuid, group_name, group_options, format_options, sharing_enabled]
+  let values = [share_uuid, group_name, group_options, format_options, sharing_enabled]
 
   db
     .query(query, values)
@@ -188,11 +188,11 @@ exports.delete = async (req, res, next) => {
   const share_uuid = req.params.share_uuid
 
   let query = 'DELETE FROM groups WHERE share_uuid = $1'
-  let values = [group_id]
+  let values = [share_uuid]
 
   db
     .query(query, values)
-    .then(response => {
+    .then(() => {
       res.status(200).send('success')
     })
     .catch(err => {
