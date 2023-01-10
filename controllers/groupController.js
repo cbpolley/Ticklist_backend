@@ -199,13 +199,12 @@ exports.edit = async (req, res, next) => {
     SET
       group_name = $2, 
       group_options = $3,
-      format_options = $4,
-      sharing_enabled = $5, 
+      sharing_enabled = $4, 
       updated_at = NOW()
     WHERE
       share_uuid = $1
     RETURNING *`
-  let values = [share_uuid, group_name, group_options, format_options, sharing_enabled]
+  let values = [share_uuid, group_name, group_options, sharing_enabled]
 
   db
     .query(query, values)
