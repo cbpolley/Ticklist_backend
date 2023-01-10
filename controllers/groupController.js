@@ -36,7 +36,7 @@ SELECT group_id,
        owner_name,
        sharing_enabled,
        groups.format_options,
-        group_lists.agg_lists as lists
+      group_lists.agg_lists as lists
 FROM groups
 left join group_lists on groups.share_uuid = group_lists.share_uuid
 WHERE groups.share_uuid = $1
