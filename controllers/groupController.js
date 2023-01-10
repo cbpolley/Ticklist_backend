@@ -191,6 +191,8 @@ exports.edit = async (req, res, next) => {
   let format_options = req.body.packet.format_options;
   let sharing_enabled = req.body.packet.sharing_enabled;
 
+  console.log(req.body.packet)
+
   let query = `
     UPDATE
       groups
