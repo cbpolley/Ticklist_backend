@@ -200,12 +200,17 @@ exports.edit = async (req, res, next) => {
       group_name = $2, 
       group_options = $3,
       sharing_enabled = $4, 
+      format_options =$5, 
       updated_at = NOW()
     WHERE
       share_uuid = $1
     RETURNING *`
-  let values = [share_uuid, group_name, group_options, sharing_enabled]
+  let values = [share_uuid, group_name, group_options, sharing_enabled, sharing_enabled]
 
+
+  console.log(query)
+  console.log(values)
+  
   db
     .query(query, values)
     .then(response => {
