@@ -14,8 +14,7 @@ exports.confirmGroupMember = async (req, res, next) => {
     updated_at = NOW()
   WHERE 
     access_pin = ${access_pin} and 
-    user_id = '${user_uuid}' and 
-    NOW() < access_pin_expire
+    uuid = '${user_uuid}' 
   RETURNING 
     uuid;`;
 
