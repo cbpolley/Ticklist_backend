@@ -187,8 +187,8 @@ exports.edit = async (req, res, next) => {
 
   let share_uuid = req.body.packet.share_uuid;
   let group_name = req.body.packet.group_name;
-  let group_options = req.body.packet.group_options;
-  let format_options = req.body.packet.format_options;
+  let group_options = req.body.packet.group_options??{};
+  let format_options = req.body.packet.format_options??{};
   let sharing_enabled = req.body.packet.sharing_enabled;
 
   console.log(req.body.packet)
@@ -205,7 +205,7 @@ exports.edit = async (req, res, next) => {
     WHERE
       share_uuid = $1
     RETURNING *`
-  let values = [share_uuid, group_name, group_options, sharing_enabled, format_options]
+  let values = [share_uuid, group_name, JSON.stringify(group_options), sharing_enabled, JSON.stringify(format_options)]
 
 
   console.log(query)
