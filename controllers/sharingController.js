@@ -11,6 +11,8 @@ exports.confirmGroupMember = async (req, res, next) => {
     sharing
   SET
     is_member = true,
+    access_pin = null,
+    access_pin_expire = null,
     updated_at = NOW()
   WHERE 
     access_pin = ${access_pin} and 
