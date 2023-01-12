@@ -20,7 +20,7 @@ exports.confirmGroupMember = async (req, res, next) => {
   RETURNING 
     uuid;`;
 
-  db
+  db 
     .query(query)
     .then(response => {
       if (response.rows.length > 0){
