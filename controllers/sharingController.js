@@ -23,6 +23,8 @@ exports.confirmGroupMember = async (req, res, next) => {
   db 
     .query(query)
     .then(response => {
+      console.log('-- response ')
+      console.log(response)
       if (response.rows.length > 0){
         const share_uuid = response.rows[0].uuid
         let groupQuery = `
