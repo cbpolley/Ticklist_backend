@@ -67,7 +67,7 @@ exports.confirmGroupMember = async (req, res, next) => {
 }
 
 exports.getSharingStatus = async (req, res, next) => {
-  const share_uuid = req.share_uuid.uuid
+  const share_uuid = req.params.share_uuid
 
   const query = `
     SELECT * from GROUPS where share_uuid = '${share_uuid}'`

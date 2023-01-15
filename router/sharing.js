@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 router.post('/confirmGroupMember', sharingController.confirmGroupMember);
 router.post('/shareWithUsernames', sharingController.shareWithUsernames);
 router.get('/single/:uuid', sharingController.getSharedGroups);
-router.get('/sharingStatus/:uuid', sharingController.getSharingStatus);
+router.get('/sharingStatus/:share_uuid', sharingController.getSharingStatus);
 router.get('/groupMembers/:uuid', sharingController.getGroupMembers);
 
 module.exports = router
