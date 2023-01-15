@@ -28,6 +28,7 @@ exports.confirmGroupMember = async (req, res, next) => {
         let groupQuery = `
           SELECT 
             owner_name,
+            owner_uuid,
             group_name,
             group_options,
             share_uuid
