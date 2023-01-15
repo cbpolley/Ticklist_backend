@@ -18,6 +18,7 @@ exports.confirmGroupMember = async (req, res, next) => {
     access_pin = ${access_pin} and 
     user_id = '${user_uuid}' 
   RETURNING 
+    user_id,
     uuid;`;
 
   db 
@@ -26,14 +27,19 @@ exports.confirmGroupMember = async (req, res, next) => {
       console.log('-- response ')
       console.log(response)
       if (response.rows.length > 0){
+
         const share_uuid = response.rows[0].uuid
+        const user_id = response.rows[0].user_id
+
         let groupQuery = `
           SELECT 
-            owner_name,
             owner_id,
+            share_uuid,
+            (select sharing_enabled from groups where share_uuid = '${share_uuid}') as sharing_enabled,
+            (select username from users where uuid = '${user_id}') as username,
             group_name,
-            group_options,
-            share_uuid
+            owner_name,
+            group_options
           FROM 
             groups
           WHERE
