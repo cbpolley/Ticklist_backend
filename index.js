@@ -10,13 +10,33 @@ const jsonParser = bodyParser.json({
   limit: '50mb'
 });
 
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+// set name space
+const groupsNameSpace = io.of("/groups");
+
+//Whenever someone connects this gets executed
+groupsNameSpace.on('connection', (socket) => {
+
+  socket.on('group', (group_uuid) => {
+    socket.join(`groupRoom${group_uuid}`)
+  })
+
+  socket.on('group_change', (group_uuid) => {
+    socket.to(`groupRoom${group_uuid}`).emit('group_update')
+  })
+
+});
 
 dotenv.config();
 
 // app.use(compression());
 app.use(jsonParser);
 
-const http = require('http').Server(app);
+// const http = require('http').Server(app);
 
 app.use(cors());
 
@@ -75,6 +95,6 @@ app.get('/', (req, res) => {
   res.status(200).send('server is running')
 })
 
-http.listen((process.env.PORT || 3000), function() {
+server.listen((process.env.PORT || 3000), function() {
   console.log('listening on', process.env.PORT);
 });
