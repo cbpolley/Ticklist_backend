@@ -63,6 +63,10 @@ const io = require("socket.io")(http, {
 // set name space
 const groupsNameSpace = io.of("/groups");
 
+const emitToGroup = (group_uuid) => {
+  groupsNameSpace.to(`groupRoom${group_uuid}`).emit('group_update')
+}
+
 //Whenever someone connects this gets executed
 groupsNameSpace.on('connection', (socket) => {
 
@@ -75,7 +79,7 @@ groupsNameSpace.on('connection', (socket) => {
   socket.on('group_change', (group_uuid) => {
     console.log('group_change')
     console.log(group_uuid)
-    groupsNameSpace.to(`groupRoom${group_uuid}`).emit('group_update')
+    emitToGroup(group_uuid)
   })
 
 });
@@ -93,6 +97,7 @@ const users = require('./router/users');
 const payment = require('./router/payment');
 const groups = require('./router/groups');
 const sharing = require('./router/sharing');
+const { group } = require('console');
 
 //ENDPOINTS
 app.use('/lists', lists);
