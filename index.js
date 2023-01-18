@@ -75,7 +75,7 @@ groupsNameSpace.on('connection', (socket) => {
   socket.on('group_change', (group_uuid) => {
     console.log('group_change')
     console.log(group_uuid)
-    socket.to(`groupRoom${group_uuid}`).emit('group_update')
+    groupsNameSpace.to(`groupRoom${group_uuid}`).emit('group_update')
   })
 
 });
