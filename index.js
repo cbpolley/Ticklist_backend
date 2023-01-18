@@ -12,9 +12,18 @@ const jsonParser = bodyParser.json({
 
 const http = require('http');
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
 
+const io = require("socket.io")(http, {
+  pingTimeout:12000,
+  pingInterval:5000,
+  // cors: {
+  //   origin: "http:/localhost:8100",
+  //   allowedHeaders: ["my-custom-header"],
+  //   credentials: true
+  // }
+  cors:true,
+  origins: ['http://localhost', 'http://localhost:8080',  'http://localhost:8080', '//localhost']
+});
 // set name space
 const groupsNameSpace = io.of("/groups");
 
