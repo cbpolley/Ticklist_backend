@@ -143,6 +143,8 @@ exports.add = async (req, res, next) => {
         }
     
       })
+
+      console.log(listsFiltered)
       
       const listsJSON = JSON.stringify(listsFiltered.flat())
 
@@ -157,6 +159,8 @@ exports.add = async (req, res, next) => {
           dynamic_class: item.list_contents.dynamic_class        
         }
       })
+
+      console.log(listContentsFiltered)
       
       const listsContentsJSON = JSON.stringify(listContentsFiltered.flat())
 
@@ -176,8 +180,14 @@ exports.add = async (req, res, next) => {
           font_size_toggle: item.format_options.font_size_toggle   
         }
       })
+
+      console.log(formatOptionsFiltered)
       
       const formatOptionsJSON = JSON.stringify(formatOptionsFiltered.flat())
+
+      console.log(listsJSON)
+      console.log(listsContentsJSON)
+      console.log(formatOptionsJSON)
 
       let query = `
         INSERT INTO
@@ -206,6 +216,8 @@ exports.add = async (req, res, next) => {
           sharing (uuid, user_id, is_member, created_at, updated_at)
         VALUES
           ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW());`;
+
+      console.log(query)
 
       db
         .query(query)
