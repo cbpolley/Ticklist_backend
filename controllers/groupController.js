@@ -149,74 +149,74 @@ exports.add = async (req, res, next) => {
       
       const listsJSON = JSON.stringify(listsFiltered.flat())
 
+      let query = `
+      INSERT INTO
+        lists (list_name, group_id, color, completed_percent, created_at, updated_at)
+      SELECT
+        list_name, group_id, color, completed_percent, NOW(), NOW()
+      FROM
+        json_populate_recordset(null::lists, '${listsJSON}'); `;
+
+
       const listContentsFiltered = lists.map(function(item){
-      
-        return {
-          list_id : item.list_contents.list_id,
-          value: item.list_contents.value,
-          is_checked: item.list_contents.is_checked,
-          color_toggle: item.list_contents.color_toggle,
-          color: item.list_contents.color, 
-          dynamic_class: item.list_contents.dynamic_class        
+
+        if (item.list_contents.length > 0) {
+          return {
+            list_id : item.list_contents.list_id,
+            value: item.list_contents.value,
+            is_checked: item.list_contents.is_checked,
+            color_toggle: item.list_contents.color_toggle,
+            color: item.list_contents.color, 
+            dynamic_class: item.list_contents.dynamic_class        
+          }
         }
       })
 
-      console.log(listContentsFiltered)
+      if (listContentsFiltered.length > 0){
+        console.log(listContentsFiltered)
       
-      const listsContentsJSON = JSON.stringify(listContentsFiltered.flat())
+        const listsContentsJSON = JSON.stringify(listContentsFiltered.flat())
 
-      const formatOptionsFiltered = lists.map(function(item){
+        query = query + `INSERT INTO
+        list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
+      SELECT
+        list_id, value, is_checked, color_toggle, color, dynamic_class,  NOW(), NOW()
+      FROM
+        json_populate_recordset(null::list_contents, '${listsContentsJSON}'); `
+      }
+
+      const formatOptionsFiltered = lists.map(function(list){
+
+        let item = JSON.parse(list.format_options)
       
         return {
-          list_id: item.format_options.list_id, 
-          numbered_value: item.format_options.numbered_value, 
-          color_value: item.format_options.color_value, 
-          font_size_value: item.format_options.font_size_value, 
-          numbered_toggle: item.format_options.numbered_toggle, 
-          color_toggle: item.format_options.color_toggle, 
-          move_mode_toggle: item.format_options.move_mode_toggle, 
-          delete_mode_toggle: item.format_options.delete_mode_toggle, 
-          progress_bar_toggle: item.format_options.progress_bar_toggle,
-          unticked_toggle: item.format_options.unticked_toggle, 
-          font_size_toggle: item.format_options.font_size_toggle   
+          list_id: item.list_id, 
+          numbered_value: item.numbered_value, 
+          color_value: item.color_value, 
+          font_size_value: item.font_size_value, 
+          numbered_toggle: item.numbered_toggle, 
+          color_toggle: item.color_toggle, 
+          move_mode_toggle: item.move_mode_toggle, 
+          delete_mode_toggle: item.delete_mode_toggle, 
+          progress_bar_toggle: item.progress_bar_toggle,
+          unticked_toggle: item.unticked_toggle, 
+          font_size_toggle: item.font_size_toggle   
         }
       })
 
-      console.log(formatOptionsFiltered)
-      
       const formatOptionsJSON = JSON.stringify(formatOptionsFiltered.flat())
 
-      console.log(listsJSON)
-      console.log(listsContentsJSON)
-      console.log(formatOptionsJSON)
-
-      let query = `
-        INSERT INTO
-          lists (list_name, group_id, color, completed_percent, created_at, updated_at)
-        SELECT
-          list_name, group_id, color, completed_percent, NOW(), NOW()
-        FROM
-          json_populate_recordset(null::lists, '${listsJSON}');
-
-        INSERT INTO
-          list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
-        SELECT
-          list_id, value, is_checked, color_toggle, color, dynamic_class,  NOW(), NOW()
-        FROM
-          json_populate_recordset(null::lists, '${listsContentsJSON}');
-
-        INSERT INTO
-          format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
-        SELECT
-          list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
-        FROM
-          json_populate_recordset(null::lists, '${formatOptionsJSON}');
-
-          
-        INSERT INTO
-          sharing (uuid, user_id, is_member, created_at, updated_at)
-        VALUES
-          ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW());`;
+      query = query + `INSERT INTO
+        format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
+      SELECT
+        list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
+      FROM
+        json_populate_recordset(null::format_options, '${formatOptionsJSON}');
+        
+      INSERT INTO
+        sharing (uuid, user_id, is_member, created_at, updated_at)
+      VALUES
+        ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW());`;
 
       console.log(query)
 
