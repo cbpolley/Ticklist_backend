@@ -6,13 +6,13 @@ exports.getSingle = async (req, res, next) => {
   let share_uuid = req.params.share_uuid
 
   let query = `
-  select 
+  select
     g.group_id,
     l.*,
-    CASE WHEN 
-    lc.list_contents_id IS NULL THEN "[]" ELSE
-    json_group_array( 
-      json_object(
+    CASE WHEN
+    lc.list_contents_id IS NULL THEN '[]' ELSE
+    json_build_array(
+      json_build_object(
         'list_contents_id', lc.list_contents_id,
         'list_id', lc.list_id,
         'value', lc.value,
@@ -21,7 +21,7 @@ exports.getSingle = async (req, res, next) => {
         'color', lc.color,
         'dynamic_class', lc.dynamic_class
     )) END AS list_contents,
-    json_object(
+    json_build_object(
       'format_option_id', fo.format_option_id,
       'list_id', fo.list_id,
       'numbered_value', fo.numbered_value,
@@ -34,13 +34,16 @@ exports.getSingle = async (req, res, next) => {
       'unticked_toggle', fo.unticked_toggle,
       'font_size_toggle', fo.font_size_toggle
   ) AS format_options
-  FROM 
+  FROM
     groups g
-  LEFT JOIN lists l on lists.group_id = groups.group_id
+  LEFT JOIN lists l on l.group_id = g.group_id
   LEFT JOIN list_contents lc on lc.list_id = l.list_id
   LEFT JOIN format_options fo on fo.list_id = l.list_id
-  WHERE g.share_uuid = $1
-  GROUP BY l.list_id, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at;`;
+  WHERE 
+    g.share_uuid = $1
+  GROUP BY 
+    g.group_id, l.list_id, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;`;
+  
   let values = [share_uuid]
 
   db
