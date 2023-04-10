@@ -133,11 +133,12 @@ exports.add = async (req, res, next) => {
   db
     .query(query, values)
     .then((response) => {
+      console.log(response)
       const listsFiltered = lists.map(function(item){
       
         return {
           list_name : item.list_name,
-          group_id: group_id,
+          group_id: response.rows[0].group_id,
           color: item.color,
           completed_percent: item.completed_percent
         }
