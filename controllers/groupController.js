@@ -99,8 +99,6 @@ exports.add = async (req, res, next) => {
   let owner_uuid = req.body.packet.owner_uuid;
   let group_name = req.body.packet.group_name;
   let lists = req.body.packet.lists;
-  const list_contents = req.body.packet.list_contents;
-  const format_options = req.body.packet.format_options;
 
   const { v4: uuidv4 } = require('uuid');
 
@@ -148,19 +146,38 @@ exports.add = async (req, res, next) => {
       
       const listsJSON = JSON.stringify(listsFiltered.flat())
 
-      const listContentsFiltered = list_contents.map(function(item){
+      const listContentsFiltered = lists.map(function(item){
       
         return {
-          list_id : item.list_id,
-          value: item.value,
-          is_checked: item.is_checked,
-          color_toggle: item.color_toggle,
-          color: item.color, 
-          dynamic_class: item.dynamic_class        
+          list_id : item.list_contents.list_id,
+          value: item.list_contents.value,
+          is_checked: item.list_contents.is_checked,
+          color_toggle: item.list_contents.color_toggle,
+          color: item.list_contents.color, 
+          dynamic_class: item.list_contents.dynamic_class        
         }
       })
       
       const listsContentsJSON = JSON.stringify(listContentsFiltered.flat())
+
+      const formatOptionsFiltered = lists.map(function(item){
+      
+        return {
+          list_id: item.format_options.list_id, 
+          numbered_value: item.format_options.numbered_value, 
+          color_value: item.format_options.color_value, 
+          font_size_value: item.format_options.font_size_value, 
+          numbered_toggle: item.format_options.numbered_toggle, 
+          color_toggle: item.format_options.color_toggle, 
+          move_mode_toggle: item.format_options.move_mode_toggle, 
+          delete_mode_toggle: item.format_options.delete_mode_toggle, 
+          progress_bar_toggle: item.format_options.progress_bar_toggle,
+          unticked_toggle: item.format_options.unticked_toggle, 
+          font_size_toggle: item.format_options.font_size_toggle   
+        }
+      })
+      
+      const formatOptionsJSON = JSON.stringify(formatOptionsFiltered.flat())
 
       let query = `
         INSERT INTO
@@ -179,8 +196,11 @@ exports.add = async (req, res, next) => {
 
         INSERT INTO
           format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
-        VALUES
-          (${format_options.list_id}, ${format_options.numbered_value}, ${format_options.color_value}, ${format_options.font_size_value}, ${format_options.numbered_toggle}, ${format_options.color_toggle}, ${format_options.move_mode_toggle}, ${format_options.delete_mode_toggle}, ${format_options.progress_bar_toggle}, ${format_options.unticked_toggle}, ${format_options.font_size_toggle}, now(), now());
+        SELECT
+          list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
+        FROM
+          json_populate_recordset(null::lists, '${formatOptionsJSON}');
+
           
         INSERT INTO
           sharing (uuid, user_id, is_member, created_at, updated_at)
