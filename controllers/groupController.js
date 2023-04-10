@@ -8,6 +8,8 @@ exports.getSingle = async (req, res, next) => {
   let query = `
   select
     g.group_id,
+    g.share_uuid,
+    g.group_name,
     l.*,
     CASE WHEN
     lc.list_contents_id IS NULL THEN '[]' ELSE
