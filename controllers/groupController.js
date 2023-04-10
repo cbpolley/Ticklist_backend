@@ -197,7 +197,7 @@ exports.add = async (req, res, next) => {
           color_value: item.color_value, 
           font_size_value: item.font_size_value, 
           numbered_toggle: item.numbered_toggle, 
-          color_toggle: item.color_toggle, 
+          colors_toggle: item.colors_toggle, 
           move_mode_toggle: item.move_mode_toggle, 
           delete_mode_toggle: item.delete_mode_toggle, 
           progress_bar_toggle: item.progress_bar_toggle,
@@ -209,9 +209,9 @@ exports.add = async (req, res, next) => {
       const formatOptionsJSON = JSON.stringify(formatOptionsFiltered.flat())
 
       query = query + `INSERT INTO
-        format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
+        format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
       SELECT
-        list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
+        list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
       FROM
         json_populate_recordset(null::format_options, '${formatOptionsJSON}');
         
