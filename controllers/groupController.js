@@ -6,41 +6,41 @@ exports.getSingle = async (req, res, next) => {
   let share_uuid = req.params.share_uuid
 
   let query = `
-  with group_lists as (
-    select
-        json_agg(
-           json_build_object(
-           'list_id', list_id,
-            'created_at', created_at,
-           'updated_at', updated_at,
-           'list_name', list_name,
-           'share_uuid', share_uuid,
-           'format_options', format_options,
-           'color', color,
-           'completed_percent', completed_percent
-           )
-        ) as  agg_lists,
-        share_uuid
-    from 
-        lists 
-    where share_uuid = $1
-    group by share_uuid
-)
-
-SELECT group_id,
-       owner_id,
-       group_name,
-       group_options,
-       groups.created_at,
-       groups.share_uuid,
-       owner_name,
-       sharing_enabled,
-       groups.format_options,
-      group_lists.agg_lists as lists
-FROM groups
-left join group_lists on groups.share_uuid = group_lists.share_uuid
-WHERE groups.share_uuid = $1
-  `
+  select 
+    g.group_id,
+    l.*,
+    CASE WHEN 
+    lc.list_contents_id IS NULL THEN "[]" ELSE
+    json_group_array( 
+      json_object(
+        'list_contents_id', lc.list_contents_id,
+        'list_id', lc.list_id,
+        'value', lc.value,
+        'is_checked', lc.is_checked,
+        'color_toggle', lc.color_toggle,
+        'color', lc.color,
+        'dynamic_class', lc.dynamic_class
+    )) END AS list_contents,
+    json_object(
+      'format_option_id', fo.format_option_id,
+      'list_id', fo.list_id,
+      'numbered_value', fo.numbered_value,
+      'font_size_value', fo.font_size_value,
+      'numbered_toggle', fo.numbered_toggle,
+      'colors_toggle', fo.colors_toggle,
+      'move_mode_toggle', fo.move_mode_toggle,
+      'delete_mode_toggle', fo.delete_mode_toggle,
+      'progress_bar_toggle', fo.progress_bar_toggle,
+      'unticked_toggle', fo.unticked_toggle,
+      'font_size_toggle', fo.font_size_toggle
+  ) AS format_options
+  FROM 
+    groups g
+  LEFT JOIN lists l on lists.group_id = groups.group_id
+  LEFT JOIN list_contents lc on lc.list_id = l.list_id
+  LEFT JOIN format_options fo on fo.list_id = l.list_id
+  WHERE g.share_uuid = $1
+  GROUP BY l.list_id, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at;`;
   let values = [share_uuid]
 
   db
