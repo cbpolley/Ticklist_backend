@@ -158,7 +158,9 @@ exports.add = async (req, res, next) => {
         json_populate_recordset(null::lists, '${listsJSON}'); `;
 
 
-      const listContentsFiltered = lists.map(function(item){
+      const listContentsFiltered = lists.map(function(list){
+
+        let item = (typeof list === 'string')?JSON.parse(list):list
 
         if (item.list_contents.length > 0) {
           return {
@@ -226,6 +228,7 @@ exports.add = async (req, res, next) => {
           res.status(200).send({'share_uuid': share_uuid})
         })
         .catch(err => {
+          console.log(err)
           res.status(501).send({
             'Database Error lists': err
           })
@@ -233,6 +236,7 @@ exports.add = async (req, res, next) => {
 
     })
     .catch(err => {
+      console.log(err)
       res.status(501).send({
         'Database Error groups': err
       })
