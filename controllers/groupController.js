@@ -96,10 +96,11 @@ exports.getAll = async (req, res, next) => {
 
 exports.add = async (req, res, next) => {
 
-  let owner_id = req.body.packet.owner_id;
+  let owner_uuid = req.body.packet.owner_uuid;
   let group_name = req.body.packet.group_name;
-  let group_options = req.body.packet.group_options
   let lists = req.body.packet.lists;
+  const list_contents = req.body.packet.list_contents;
+  const format_options = req.body.packet.format_options;
 
   const { v4: uuidv4 } = require('uuid');
 
@@ -124,14 +125,12 @@ exports.add = async (req, res, next) => {
   
   let query = `
   INSERT INTO groups 
-    (owner_id, share_uuid, group_name, group_options, created_at, updated_at) 
+    (owner_uuid, share_uuid, group_name, created_at, updated_at) 
   VALUES 
-    ($1, $2, $3, $4, NOW(), NOW());`;
+    ($1, $2, $3, $4, NOW(), NOW())
+  RETURNING group_id;`;
 
-  let values = [owner_id, share_uuid, group_name, group_options]
-
-  console.log(query)
-  console.log(values)
+  let values = [owner_uuid, share_uuid, group_name, group_options]
   
   db
     .query(query, values)
@@ -139,30 +138,54 @@ exports.add = async (req, res, next) => {
       const listsFiltered = lists.map(function(item){
       
         return {
-          list_contents: item.list_contents,
           list_name : item.list_name,
-          share_uuid: share_uuid,
-          format_options: item.list_contents,
-          color:item.color,
-          completed_percent:item.completed_percent
+          group_id: group_id,
+          color: item.color,
+          completed_percent: item.completed_percent
         }
     
       })
       
       const listsJSON = JSON.stringify(listsFiltered.flat())
 
+      const listContentsFiltered = list_contents.map(function(item){
+      
+        return {
+          list_id : item.list_id,
+          value: item.value,
+          is_checked: item.is_checked,
+          color_toggle: item.color_toggle,
+          color: item.color, 
+          dynamic_class: item.dynamic_class        
+        }
+      })
+      
+      const listsContentsJSON = JSON.stringify(listContentsFiltered.flat())
+
       let query = `
-      INSERT INTO
-        lists (list_contents, list_name, share_uuid, format_options, color, completed_percent, created_at, updated_at)
-      SELECT
-        list_contents, list_name, share_uuid, format_options, color, completed_percent, NOW(), NOW()
-      FROM
-        json_populate_recordset(null::lists, '${listsJSON}');
-        
-      INSERT INTO
-        sharing (uuid, user_id, is_member, created_at, updated_at)
-      VALUES
-        ('${share_uuid}', '${owner_id}', true, NOW(), NOW());`;
+        INSERT INTO
+          lists (list_name, group_id, color, completed_percent, created_at, updated_at)
+        SELECT
+          list_name, group_id, color, completed_percent, NOW(), NOW()
+        FROM
+          json_populate_recordset(null::lists, '${listsJSON}');
+
+        INSERT INTO
+          list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
+        SELECT
+          list_id, value, is_checked, color_toggle, color, dynamic_class,  NOW(), NOW()
+        FROM
+          json_populate_recordset(null::lists, '${listsContentsJSON}');
+
+        INSERT INTO
+          format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, color_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
+        VALUES
+          (${format_options.list_id}, ${format_options.numbered_value}, ${format_options.color_value}, ${format_options.font_size_value}, ${format_options.numbered_toggle}, ${format_options.color_toggle}, ${format_options.move_mode_toggle}, ${format_options.delete_mode_toggle}, ${format_options.progress_bar_toggle}, ${format_options.unticked_toggle}, ${format_options.font_size_toggle}, now(), now());
+          
+        INSERT INTO
+          sharing (uuid, user_id, is_member, created_at, updated_at)
+        VALUES
+          ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW());`;
 
       db
         .query(query)
@@ -188,7 +211,6 @@ exports.edit = async (req, res, next) => {
   let share_uuid = req.body.packet.share_uuid;
   let group_name = req.body.packet.group_name;
   let group_options = req.body.packet.group_options??{};
-  let format_options = req.body.packet.format_options??{};
   let sharing_enabled = req.body.packet.sharing_enabled;
 
   console.log(req.body.packet)
@@ -200,7 +222,6 @@ exports.edit = async (req, res, next) => {
       group_name = $2, 
       group_options = $3,
       sharing_enabled = $4, 
-      format_options = $5, 
       updated_at = NOW()
     WHERE
       share_uuid = $1
@@ -228,12 +249,30 @@ exports.delete = async (req, res, next) => {
 
   const share_uuid = req.params.share_uuid
 
-  let query = 'DELETE FROM groups WHERE share_uuid = $1'
+  let query = ` 
+    DELETE FROM 
+      format_options 
+    WHERE 
+      list_id in (
+        SELECT list_id from lists where group_id = (
+          SELECT group_id from groups where share_uuid = $1
+        )
+      );
+
+    DELETE FROM 
+      lists 
+    WHERE 
+      group_id in (
+        SELECT group_id from groups where share_uuid = $1
+      );
+
+    DELETE FROM groups WHERE share_uuid = $1;
+    `
   let values = [share_uuid]
 
   db
     .query(query, values)
-    .then(() => {
+    .then((response) => {
       res.status(200).send('success')
     })
     .catch(err => {
