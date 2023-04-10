@@ -125,10 +125,10 @@ exports.add = async (req, res, next) => {
   INSERT INTO groups 
     (owner_uuid, share_uuid, group_name, created_at, updated_at) 
   VALUES 
-    ($1, $2, $3, $4, NOW(), NOW())
+    ($1, $2, $3, NOW(), NOW())
   RETURNING group_id;`;
 
-  let values = [owner_uuid, share_uuid, group_name, group_options]
+  let values = [owner_uuid, share_uuid, group_name]
   
   db
     .query(query, values)
