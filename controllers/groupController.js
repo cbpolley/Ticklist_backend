@@ -125,6 +125,9 @@ exports.add = async (req, res, next) => {
 
   db.query(query, values)
     .then(async (response) => {
+      console.log('response')
+      console.log(response)
+      console.log(lists)
       for (let index = 0; index < lists.length; index++) {
         let share_list_uuid = uuidv4();
 
@@ -133,13 +136,15 @@ exports.add = async (req, res, next) => {
         let list_uuid_exists = true;
 
         do {
-          await db.query(list_uuid_query).then((check_response) => {
+          await db.query(list_uuid_query)
+          .then((check_response) => {
             if (check_response.rows.length < 1) {
               list_uuid_exists = false;
             } else {
               share_list_uuid = uuidv4();
             }
-          });
+          })
+          .catch(err => console.log(err))
         } while (list_uuid_exists === true);
 
         const insert_list_query = `
