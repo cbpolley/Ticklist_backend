@@ -162,8 +162,8 @@ exports.add = async (req, res, next) => {
           lists[index].color,
         ];
 
-        db.query(insert_list_query, insert_list_values)
-          .then((insertListResponse) => {
+        await db.query(insert_list_query, insert_list_values)
+          .then(async (insertListResponse) => {
 
             const listContentsFiltered = lists.map(function (list) {
               let item = typeof list === "string" ? JSON.parse(list) : list;
@@ -188,8 +188,7 @@ exports.add = async (req, res, next) => {
                 listContentsFiltered.flat()
               );
 
-              query =
-                query +
+              const contents_query =
                 `INSERT INTO
         list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
       SELECT
@@ -220,8 +219,8 @@ exports.add = async (req, res, next) => {
               formatOptionsFiltered.flat()
             );
 
-            query =
-              query +
+            contents_query =
+            contents_query +
               `INSERT INTO
         format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
       SELECT
@@ -234,9 +233,9 @@ exports.add = async (req, res, next) => {
       VALUES
         ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW());`;
 
-            console.log(query);
+            console.log(contents_query);
 
-            db.query(query)
+            await db.query(contents_query)
               .then(() => {
                 res.status(200).send({ share_uuid: share_uuid });
               })
