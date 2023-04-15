@@ -147,6 +147,7 @@ exports.add = async (req, res, next) => {
             lists (list_name, share_list_uuid, group_id, color, completed_percent, created_at, updated_at)
           VALUES (
             $1, $2, $3, $4, 0, NOW(), NOW()
+          )
           RETURNING list_id;`;
 
         const insert_list_values = [
