@@ -101,28 +101,70 @@ exports.add = async (req, res, next) => {
 
   const share_uuid = req.body.packet.share_uuid;
   const list_name = req.body.packet.list.list_name;
-
-  const json_format_options = req.body.packet.list.format_options
   const color = req.body.packet.list.color;
+
+  const { v4: uuidv4 } = require('uuid');
+
+  let share_list_uuid = uuidv4();
 
   const query = `
   INSERT INTO 
-    lists (list_name, share_uuid, color, format_options, list_contents, completed_percent, created_at, updated_at) 
+    lists (list_name, share_list_uuid, share_uuid, color, completed_percent, created_at, updated_at) 
   VALUES 
-    ($1, $2, $3, $4, '[]', 0, NOW(), NOW())`
+    ($1, $2, $3, 0, NOW(), NOW())
+  RETURNING list_id;`;
 
 
-  const values = [list_name, share_uuid, color, json_format_options]
+  const values = [list_name, share_list_uuid, share_uuid, color, json_format_options]
 
   db
     .query(query, values)
-    .then(() => {
-      res.status(200).send('success')
+    .then((response) => {
+      if (response.rows[0].list_id) {
+        const fo_query = `
+          INSERT INTO 
+            format_options (
+              list_id,
+              numbered_value,
+              color_value, 
+              font_size_value,  
+              numbered_toggle,
+              colors_toggle, 
+              move_mode_toggle,  
+              delete_mode_toggle,  
+              progress_bar_toggle,  
+              unticked_toggle,  
+              font_size_toggle,  
+              created_at,
+              updated_at
+            ) 
+            VALUES (
+              ${response.rows[0].list_id},
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              now(),
+              now()
+          );`;
+        db.query(fo_query)
+          .then(() => {
+            res.status(200).send('success')
+
+          })
+          .catch(err => {
+            res.status(501).send('Error')
+          })
+      }
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send('Error')
     })
 }
 
