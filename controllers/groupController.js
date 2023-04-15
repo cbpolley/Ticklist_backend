@@ -239,7 +239,6 @@ exports.add = async (req, res, next) => {
 
             await db.query(contents_query)
               .then(() => {
-                res.status(200).send({ share_uuid: share_uuid });
               })
               .catch((err) => {
                 console.log(err);
@@ -250,6 +249,9 @@ exports.add = async (req, res, next) => {
             console.log(err);
             res.status(501).send("Database Error");
           });
+        if (index === lists.length - 1){
+          res.status(200).send({ share_uuid: share_uuid });
+        }
       }
     })
     .catch((err) => {
