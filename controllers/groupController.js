@@ -165,6 +165,8 @@ exports.add = async (req, res, next) => {
         await db.query(insert_list_query, insert_list_values)
           .then(async (insertListResponse) => {
 
+            let contents_query = '';
+
             const listContentsFiltered = lists.map(function (list) {
               let item = typeof list === "string" ? JSON.parse(list) : list;
 
@@ -188,7 +190,7 @@ exports.add = async (req, res, next) => {
                 listContentsFiltered.flat()
               );
 
-              const contents_query =
+              contents_query = contents_query + 
                 `INSERT INTO
         list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
       SELECT
