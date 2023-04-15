@@ -115,7 +115,7 @@ exports.add = async (req, res, next) => {
   RETURNING list_id;`;
 
 
-  const values = [list_name, share_list_uuid, share_uuid, color, json_format_options]
+  const values = [list_name, share_list_uuid, share_uuid, color]
 
   db
     .query(query, values)
@@ -181,9 +181,9 @@ exports.groupUpdate = async (req, res, next) => {
 
   let query = `
   INSERT INTO
-    lists (list_contents, list_name, uuid, format_options, color, completed_percent, updated_at, created_at)
+    lists (list_name, uuid, color, completed_percent, updated_at, created_at)
   SELECT
-    list_contents, list_name, uuid, format_options, color, completed_percent, NOW(), NOW()
+    list_name, uuid, color, completed_percent, NOW(), NOW()
   FROM
     json_populate_recordset(null::lists, '${listsJSON}')`;
 
@@ -195,8 +195,8 @@ exports.groupUpdate = async (req, res, next) => {
         UPDATE 
           lists 
         SET 
-          (list_contents, list_name, uuid, format_options, color, completed_percent, updated_at, created_at) = 
-          ((select list_contents, list_name, uuid, format_options, color, completed_percent, NOW(), NOW() from json_populate_record(NULL::lists,'${listsJSON}'))
+          (list_name, uuid, color, completed_percent, updated_at, created_at) = 
+          ((select list_name, uuid, color, completed_percent, NOW(), NOW() from json_populate_record(NULL::lists,'${listsJSON}'))
           `
       } 
     })
@@ -224,8 +224,6 @@ exports.edit = async (req, res, next) => {
   console.log(req.body)
 
   let list_id = req.body.packet.list_id;
-  let list_contents = JSON.stringify(req.body.packet.list_contents);
-  let format_options = JSON.stringify(req.body.packet.format_options);
   let completed_percent = req.body.packet.completed_percent;
   let list_name = req.body.packet.list_name;
   let color = req.body.packet.color;
@@ -234,16 +232,14 @@ exports.edit = async (req, res, next) => {
     UPDATE
       lists
     SET
-      list_contents = $2, 
-      format_options = $3, 
-      completed_percent = $4, 
-      list_name = $5, 
-      color = $6, 
+      completed_percent = $2, 
+      list_name = $3, 
+      color = $4, 
       updated_at = NOW()
     WHERE
       list_id = $1
     RETURNING *`
-  let values = [list_id, list_contents, format_options, completed_percent, list_name, color]
+  let values = [list_id, completed_percent, list_name, color]
 
   db
     .query(query, values)
