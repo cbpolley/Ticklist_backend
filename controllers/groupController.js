@@ -150,10 +150,10 @@ exports.add = async (req, res, next) => {
           RETURNING list_id;`;
 
         const insert_list_values = [
-          list_name,
+          lists[i].list_name,
           share_list_uuid,
           response.rows[0].group_id,
-          color,
+          lists[i].color,
         ];
 
         db.query(insert_list_query, insert_list_values)
