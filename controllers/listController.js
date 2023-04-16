@@ -7,39 +7,43 @@ exports.getSingle = async (req, res, next) => {
   let list_id = req.params.id
 
   const query = `
-    SELECT 
-      l.*,
-      CASE WHEN 
-        lc.list_contents_id IS NULL THEN "[]" ELSE
-        json_group_array( 
-          json_object(
-            'list_contents_id', lc.list_contents_id,
-            'list_id', lc.list_id,
-            'value', lc.value,
-            'is_checked', lc.is_checked,
-            'color_toggle', lc.color_toggle,
-            'color', lc.color,
-            'dynamic_class', lc.dynamic_class
-        )) END AS list_contents,
-          json_object(
-            'format_option_id', fo.format_option_id,
-            'list_id', fo.list_id,
-            'numbered_value', fo.numbered_value,
-            'font_size_value', fo.font_size_value,
-            'numbered_toggle', fo.numbered_toggle,
-            'colors_toggle', fo.colors_toggle,
-            'move_mode_toggle', fo.move_mode_toggle,
-            'delete_mode_toggle', fo.delete_mode_toggle,
-            'progress_bar_toggle', fo.progress_bar_toggle,
-            'unticked_toggle', fo.unticked_toggle,
-            'font_size_toggle', fo.font_size_toggle
-        ) AS format_options
-    FROM 
-      lists l 
-    LEFT JOIN list_contents lc on lc.list_id = l.list_id
-    LEFT JOIN format_options fo on fo.list_id = l.list_id
-    WHERE l.list_id = ${list_id}
-    GROUP BY l.list_id, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at;`;
+  SELECT 
+  l.*,
+  CASE WHEN
+    lc.list_contents_id IS NULL THEN '[]' ELSE
+    json_build_array(
+      json_build_object(
+        'list_contents_id', lc.list_contents_id,
+        'list_id', lc.list_id,
+        'value', lc.value,
+        'is_checked', lc.is_checked,
+        'color_toggle', lc.color_toggle,
+        'color', lc.color,
+        'dynamic_class', lc.dynamic_class
+    )) END AS list_contents,
+      json_build_object(
+        'format_option_id', fo.format_option_id,
+        'list_id', fo.list_id,
+        'numbered_value', fo.numbered_value,
+        'font_size_value', fo.font_size_value,
+        'numbered_toggle', fo.numbered_toggle,
+        'colors_toggle', fo.colors_toggle,
+        'move_mode_toggle', fo.move_mode_toggle,
+        'delete_mode_toggle', fo.delete_mode_toggle,
+        'progress_bar_toggle', fo.progress_bar_toggle,
+        'unticked_toggle', fo.unticked_toggle,
+        'font_size_toggle', fo.font_size_toggle
+    ) AS format_options
+FROM 
+  lists l 
+LEFT JOIN list_contents lc on lc.list_id = l.list_id
+LEFT JOIN format_options fo on fo.list_id = l.list_id
+WHERE
+      l.share_list_uuid = '${list_id}'
+GROUP BY
+         l.share_list_uuid, l.group_id, l.list_name, l.color, l.completed_percent, l.created_at, l.updated_at, l.list_id,
+         lc.list_contents_id, lc.list_id, lc.value, lc.is_checked, lc.color_toggle, lc.color, lc.dynamic_class,
+         fo.format_option_id, fo.list_id, fo.numbered_value, fo.numbered_toggle, fo.colors_toggle, fo.move_mode_toggle, fo.delete_mode_toggle, fo.progress_bar_toggle, fo.unticked_toggle, fo.font_size_toggle;`;
 
 
   db
