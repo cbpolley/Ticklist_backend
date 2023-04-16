@@ -184,13 +184,15 @@ exports.getGroupMembers = async (req, res, next) => {
   FROM
     sharing s
   LEFT JOIN groups g on g.share_uuid = s.uuid
-  LEFT JOIN lists l on l.group_id = g.group_id
+  LEFT JOIN lists l on l.group_id = g.share_uuid
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
-    s.uuid = '${uuid}';`;
+    s.uuid = $1;`;
+
+  const values = [uuid]
 
   db
-    .query(query)
+    .query(query, values)
     .then((response) => {
       console.log('members response.rows')
       console.log(response.rows)
