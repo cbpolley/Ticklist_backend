@@ -91,9 +91,7 @@ exports.getAll = async (req, res, next) => {
       res.status(200).send(response.rows)
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
@@ -111,7 +109,7 @@ exports.add = async (req, res, next) => {
   INSERT INTO 
     lists (list_name, share_list_uuid, share_uuid, color, completed_percent, created_at, updated_at) 
   VALUES 
-    ($1, $2, $3, 0, NOW(), NOW())
+    ($1, $2, $3, $4, 0, NOW(), NOW())
   RETURNING list_id;`;
 
 
@@ -159,11 +157,13 @@ exports.add = async (req, res, next) => {
 
           })
           .catch(err => {
+            console.log(err)
             res.status(501).send('Error')
           })
       }
     })
     .catch(err => {
+      console.log(err)
       res.status(501).send('Error')
     })
 }
@@ -213,9 +213,8 @@ exports.groupUpdate = async (req, res, next) => {
       res.status(200).send(response.rows)
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      console.log(err)
+      res.status(501).send("Error")
     })
 
 }
@@ -249,9 +248,7 @@ exports.edit = async (req, res, next) => {
     })
     .catch(err => {
       console.log(err)
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
@@ -269,8 +266,7 @@ exports.delete = async (req, res, next) => {
       res.status(200).send('success')
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      console.log(err)
+      res.status(501).send("Error")
     })
 }

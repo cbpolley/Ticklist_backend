@@ -58,9 +58,7 @@ exports.getPaymentIntent = async (req, res, next) => {
         })
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 
 }
@@ -113,8 +111,6 @@ exports.getPrevious = async (req, res, next) => {
       res.status(200).send(dbRes.rows)
     })
     .catch((err) => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }

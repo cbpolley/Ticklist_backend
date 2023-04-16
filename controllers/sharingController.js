@@ -60,9 +60,7 @@ exports.confirmGroupMember = async (req, res, next) => {
       }
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
@@ -157,9 +155,7 @@ exports.getSharedGroups = async (req, res, next) => {
       })
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
@@ -203,9 +199,7 @@ exports.getGroupMembers = async (req, res, next) => {
       res.status(200).send(response.rows)
     })
     .catch((err) => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 

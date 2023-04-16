@@ -75,9 +75,7 @@ exports.getAll = async (req, res, next) => {
       res.status(200).send(response.rows)
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
@@ -199,9 +197,7 @@ exports.edit = async (req, res, next) => {
       res.status(200).send(response.rows)
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
@@ -218,9 +214,7 @@ exports.delete = async (req, res, next) => {
       res.status(200).send('success')
     })
     .catch(err => {
-      res.status(501).send({
-        'Database Error': err
-      })
+      res.status(501).send("Error")
     })
 }
 
