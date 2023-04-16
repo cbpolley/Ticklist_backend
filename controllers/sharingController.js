@@ -191,7 +191,7 @@ exports.getGroupMembers = async (req, res, next) => {
   LEFT JOIN lists l on l.group_id = g.group_id
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
-    uuid = $1;`;
+    s.uuid = $1;`;
 
   const values = [uuid]
 
