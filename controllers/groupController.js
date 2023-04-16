@@ -6,7 +6,6 @@ exports.getSingle = async (req, res, next) => {
 
   let query = `
   select
-    g.group_id,
     g.share_uuid,
     g.group_name,
     l.*,
@@ -40,10 +39,10 @@ exports.getSingle = async (req, res, next) => {
   LEFT JOIN lists l on l.group_id = g.share_uuid
   LEFT JOIN list_contents lc on lc.list_id = l.list_id
   LEFT JOIN format_options fo on fo.list_id = l.list_id
-  WHERE 
+  WHERE
     g.share_uuid = $1
-  GROUP BY 
-    g.share_uuid, l.list_id, l.share_list_uuid, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;`;
+  GROUP BY
+    g.share_uuid, g.group_name, l.list_id, l.share_list_uuid, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;_uuid, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;`;
 
   let values = [share_uuid];
 
