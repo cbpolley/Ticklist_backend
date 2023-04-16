@@ -128,6 +128,13 @@ exports.add = async (req, res, next) => {
       console.log('response')
       console.log(response)
       console.log(lists)
+
+      let contents_query = `      
+      INSERT INTO
+        sharing (uuid, user_id, is_member, created_at, updated_at)
+      VALUES
+        ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW()); `;
+
       for (let index = 0; index < lists.length; index++) {
         let share_list_uuid = uuidv4();
 
@@ -147,6 +154,8 @@ exports.add = async (req, res, next) => {
           .catch(err => console.log(err))
         } while (list_uuid_exists === true);
 
+
+
         const insert_list_query = `
           INSERT INTO
             lists (list_name, share_list_uuid, group_id, color, completed_percent, created_at, updated_at)
@@ -162,10 +171,14 @@ exports.add = async (req, res, next) => {
           lists[index].color,
         ];
 
+        console.log('insert_list_values')
+        console.log(insert_list_values)
+
         await db.query(insert_list_query, insert_list_values)
           .then(async (insertListResponse) => {
 
-            let contents_query = '';
+            console.log('insertListResponse')
+            console.log(insertListResponse)
 
             const listContentsFiltered = lists.map(function (list) {
               let item = typeof list === "string" ? JSON.parse(list) : list;
@@ -184,6 +197,7 @@ exports.add = async (req, res, next) => {
             });
 
             if (listContentsFiltered.length > 0) {
+              console.log('listContentsFiltered');
               console.log(listContentsFiltered);
 
               const listsContentsJSON = JSON.stringify(
@@ -192,11 +206,11 @@ exports.add = async (req, res, next) => {
 
               contents_query = contents_query + 
                 `INSERT INTO
-        list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
-      SELECT
-        list_id, value, is_checked, color_toggle, color, dynamic_class,  NOW(), NOW()
-      FROM
-        json_populate_recordset(null::list_contents, '${listsContentsJSON}'); `;
+                    list_contents (list_id, value, is_checked, color_toggle, color, dynamic_class, created_at, updated_at)
+                  SELECT
+                    list_id, value, is_checked, color_toggle, color, dynamic_class,  NOW(), NOW()
+                  FROM
+                    json_populate_recordset(null::list_contents, '${listsContentsJSON}'); `;
             }
 
             const formatOptionsFiltered = lists.map(function (list) {
@@ -228,13 +242,9 @@ exports.add = async (req, res, next) => {
       SELECT
         list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
       FROM
-        json_populate_recordset(null::format_options, '${formatOptionsJSON}');
-        
-      INSERT INTO
-        sharing (uuid, user_id, is_member, created_at, updated_at)
-      VALUES
-        ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW());`;
+        json_populate_recordset(null::format_options, '${formatOptionsJSON}');`;
 
+            console.log('contents_query');
             console.log(contents_query);
 
             await db.query(contents_query)

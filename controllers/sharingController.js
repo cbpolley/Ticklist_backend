@@ -173,10 +173,12 @@ exports.getGroupMembers = async (req, res, next) => {
   let query = `
   with first as (
     SELECT
-       user_id,
-       is_member
+       s.user_id,
+       s.is_member
     FROM
-        sharing
+        sharing s
+    LEFT JOIN
+      groups g on g.share_uuid = s.uuid
     WHERE
         uuid = '${uuid}'
   )
