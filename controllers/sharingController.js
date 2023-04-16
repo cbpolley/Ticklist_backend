@@ -182,12 +182,13 @@ exports.getGroupMembers = async (req, res, next) => {
       )
     ) as members
   FROM
-    sharing s
-  LEFT JOIN groups g on g.share_uuid = s.uuid
+    groups g
+  LEFT JOIN sharing s on g.share_uuid = s.uuid
   LEFT JOIN lists l on l.group_id = g.share_uuid
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
-    s.uuid = $1;`;
+    s.uuid = $1
+  GROUP BY g.group_name, l.completed_percent, s.user_id, s.is_member, u.username`;
 
   const values = [uuid]
 
