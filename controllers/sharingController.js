@@ -190,7 +190,7 @@ exports.getGroupMembers = async (req, res, next) => {
     s.uuid = '${uuid}';`;
 
   db
-    .query(query, values)
+    .query(query)
     .then((response) => {
       console.log('members response.rows')
       console.log(response.rows)
