@@ -101,6 +101,9 @@ exports.add = async (req, res, next) => {
   const list_name = req.body.packet.list.list_name;
   const color = req.body.packet.list.color;
 
+  console.log('req.body')
+  console.log(req.body)
+
   const { v4: uuidv4 } = require('uuid');
 
   let share_list_uuid = uuidv4();
