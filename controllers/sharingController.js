@@ -170,7 +170,7 @@ exports.getGroupMembers = async (req, res, next) => {
 
   console.log(req.params)
 
-  let query = `
+  const query = `
   SELECT
     g.group_name,
     json_build_array(
@@ -197,10 +197,12 @@ exports.getGroupMembers = async (req, res, next) => {
 
   db
     .query(query, values)
-    .then(response => {
+    .then((response) => {
+      console.log('members response.rows')
+      console.log(response.rows)
       res.status(200).send(response.rows)
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(501).send({
         'Database Error': err
       })
