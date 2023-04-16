@@ -187,9 +187,7 @@ exports.getGroupMembers = async (req, res, next) => {
   LEFT JOIN lists l on l.group_id = g.group_id
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
-    s.uuid = $1;`;
-
-  const values = [uuid]
+    s.uuid = '${uuid}';`;
 
   db
     .query(query, values)
@@ -199,6 +197,7 @@ exports.getGroupMembers = async (req, res, next) => {
       res.status(200).send(response.rows)
     })
     .catch((err) => {
+      console.log(err)
       res.status(501).send("Error")
     })
 }
