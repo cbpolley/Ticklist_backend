@@ -173,22 +173,23 @@ exports.getGroupMembers = async (req, res, next) => {
   let query = `
   SELECT
     g.group_name,
-    g.share_uuid,
-  json_build_array(
+    json_build_array(
       json_build_object(
-      'completed_percent', l.completed_percent
+        'completed_percent', l.completed_percent
       )
     ) as lists,
     json_build_array(
       json_build_object(
-      'user_id', s.user_id,
-      'is_member',  s.is_member
+        'user_id', s.user_id,
+        'is_member',  s.is_member,
+        'username', u.username
       )
     ) as members
   FROM
     sharing s
   LEFT JOIN groups g on g.share_uuid = s.uuid
   LEFT JOIN lists l on l.group_id = g.group_id
+  LEFT JOIN users u on u.uuid = s.user_id
   WHERE
     uuid = $1;`;
 
