@@ -171,26 +171,31 @@ exports.getGroupMembers = async (req, res, next) => {
   console.log(req.params)
 
   let query = `
-  with first as (
-    SELECT
-       s.user_id,
-       s.is_member
-    FROM
-        sharing s
-    LEFT JOIN
-      groups g on g.share_uuid = s.uuid
-    WHERE
-        uuid = '${uuid}'
-  )
-
   SELECT
-      first.*, users.username
+    g.group_name,
+    g.share_uuid,
+  json_build_array(
+      json_build_object(
+      'completed_percent', l.completed_percent
+      )
+    ) as lists,
+    json_build_array(
+      json_build_object(
+      'user_id', s.user_id,
+      'is_member',  s.is_member
+      )
+    ) as members
   FROM
-      users
-  JOIN first on first.user_id = users.uuid`
+    sharing s
+  LEFT JOIN groups g on g.share_uuid = s.uuid
+  LEFT JOIN lists l on l.group_id = g.group_id
+  WHERE
+    uuid = $1;`;
+
+  const values = [uuid]
 
   db
-    .query(query)
+    .query(query, values)
     .then(response => {
       res.status(200).send(response.rows)
     })
