@@ -42,18 +42,20 @@ exports.getSingle = async (req, res, next) => {
   WHERE
     g.share_uuid = $1
   GROUP BY
-    g.share_uuid, g.group_name, l.list_id, l.share_list_uuid, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;_uuid, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;`;
+    g.share_uuid, g.group_name, l.list_id, l.share_list_uuid, l.list_name, l.group_id, l.color, l.completed_percent, l.created_at, l.updated_at, fo.format_option_id, lc.list_contents_id;`;
 
   let values = [share_uuid];
 
+  console.log('values')
+  console.log(values)
+
   db.query(query, values)
     .then((response) => {
+      console.log(response)
       res.status(200).send(response.rows);
     })
     .catch((err) => {
-      res.status(501).send({
-        "Database Error": err,
-      });
+      console.log(err)
     });
 };
 
