@@ -115,6 +115,11 @@ exports.add = async (req, res, next) => {
   } while (uuid_exists === true);
 
   let query = `
+  INSERT INTO
+    sharing (user_id, uuid, is_member, created_at, updated_at)
+  VALUES
+    ($1, $2, true, NOW(), NOW()); 
+
   INSERT INTO groups 
     (owner_uuid, share_uuid, group_name, created_at, updated_at) 
   VALUES 
@@ -129,11 +134,7 @@ exports.add = async (req, res, next) => {
       console.log(response)
       console.log(lists)
 
-      let contents_query = `      
-      INSERT INTO
-        sharing (uuid, user_id, is_member, created_at, updated_at)
-      VALUES
-        ('${share_uuid}', '${owner_uuid}', true, NOW(), NOW()); `;
+      let contents_query = ``;
 
       for (let index = 0; index < lists.length; index++) {
         let share_list_uuid = uuidv4();
@@ -238,29 +239,28 @@ exports.add = async (req, res, next) => {
             contents_query =
             contents_query +
               `INSERT INTO
-        format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
-      SELECT
-        list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
-      FROM
-        json_populate_recordset(null::format_options, '${formatOptionsJSON}');`;
+                format_options (list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, created_at, updated_at)
+              SELECT
+                list_id, numbered_value, color_value, font_size_value, numbered_toggle, colors_toggle, move_mode_toggle, delete_mode_toggle, progress_bar_toggle, unticked_toggle, font_size_toggle, NOW(), NOW()
+              FROM
+                json_populate_recordset(null::format_options, '${formatOptionsJSON}'); `;
 
-            console.log('contents_query');
-            console.log(contents_query);
+          console.log('contents_query');
+          console.log(contents_query);
 
-            await db.query(contents_query)
-              .then(() => {
-              })
-              .catch((err) => {
-                console.log(err);
-                res.status(501).send("Database Error");
-              });
+          await db.query(contents_query)
+            .catch((err) => {
+              console.log(err);
+              res.status(501).send("Database Error");
+            });
           })
           .catch((err) => {
             console.log(err);
             res.status(501).send("Database Error");
           });
-      }
-    res.status(200).send({ share_uuid: share_uuid });
+        }
+        res.status(200).send({ share_uuid: share_uuid });
+      
     })
     .catch((err) => {
       console.log(err);
