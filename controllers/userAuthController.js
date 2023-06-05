@@ -6,12 +6,12 @@ const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res, next) => {
 
-  let email = req.body.email.trim();
+  let email = req.body.email.trim().toLowerCase();
   let plainPassword = req.body.password;
 
   let query = `
   with user_details as (
-    SELECT uuid, password FROM users WHERE email = '${email}'
+    SELECT uuid, password FROM users WHERE lower(email) = '${email}'
   )
 
   select
@@ -84,14 +84,8 @@ exports.login = async (req, res, next) => {
 exports.checkUser = async (req, res, next) => {
 
   let token = req.params.token
-
-  console.log('token')
-  console.log(token)
-
   try{
     var decoded = jwt.verify(token, process.env.token_secret);
-    console.log('decoded')
-    console.log(decoded)
     res.status(200).send({
       uuid: decoded.uuid,
       payment_period_end: decoded.payment_period_end,
@@ -112,7 +106,7 @@ exports.logout = async (req, res, next) => {}
 
 exports.passwordReset = async (req, res, next) => {
 
-  const email = req.body.email;
+  const email = req.body.email.toLowerCase();
   const titleMsg = 'Reset your password';
   const templateId = '';
   const sgMail = require('@sendgrid/mail');

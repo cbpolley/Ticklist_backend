@@ -8,10 +8,6 @@ exports.getSingle = async (req, res, next) => {
 
   let uuid = req.params.uuid
 
-  console.log('get single user')
-  console.log(req.params)
-  console.log(uuid)
-
   let query = `
     SELECT 
       uuid,
@@ -39,7 +35,7 @@ exports.getSingle = async (req, res, next) => {
 
 exports.checkExistingEmail = async (req, res, next) => {
 
-  let email = req.params.email
+  let email = req.params.email.toLowerCase();
 
   let query = 'SELECT email FROM users WHERE email = $1'
   let values = [email]
@@ -83,7 +79,7 @@ exports.add = async (req, res, next) => {
 
   // first check to see if user exists
 
-  let email = req.body.packet.email;
+  let email = req.body.packet.email.toLowerCase();
   let plain_password = req.body.packet.password;
   let query = 'SELECT email FROM users WHERE email = $1'
   let values = [email]
@@ -178,7 +174,7 @@ exports.add = async (req, res, next) => {
 
 exports.edit = async (req, res, next) => {
 
-  let email = req.body.packet.email
+  let email = req.body.packet.email.toLowerCase();
   let user_id = req.body.packet.user_id
 
   let query = `
