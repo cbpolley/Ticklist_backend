@@ -85,8 +85,8 @@ exports.getSharingStatus = async (req, res, next) => {
 exports.shareWithUsernames = async (req, res, next) => {
 
   let userArray = req.body.packet.usernames.reduce((filter, obj) => { 
-    if (obj.value && obj.value.length > 0){
-      filter.push(obj.value.toLowerCase().trim())
+    if (obj.value && obj.value.length > 0 ){
+      filter.push(obj.value.toLowerCase().replace(/[^a-z0-9]/gi, '').trim())
     }
     return filter  
   }, [])
@@ -94,7 +94,7 @@ exports.shareWithUsernames = async (req, res, next) => {
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
   let share_uuid = req.body.packet.share_uuid
 
-  const id_query = `select uuid, username from users where LOWER(username) in ${usernames}`
+  const id_query = `select uuid, username from users where LOWER(username) in ${usernames};`
 
   db
   .query(id_query)
@@ -169,12 +169,8 @@ exports.getGroupMembers = async (req, res, next) => {
   const query = `
   SELECT
     g.group_name,
-    json_build_array(
-      json_build_object(
-        'completed_percent', l.completed_percent
-      )
-    ) as lists,
-    json_build_array(
+    l.completed_percent,
+    json_agg(
       json_build_object(
         'user_id', s.user_id,
         'is_member',  s.is_member,
@@ -188,7 +184,7 @@ exports.getGroupMembers = async (req, res, next) => {
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
     s.uuid = $1
-  GROUP BY g.group_name, l.completed_percent, s.user_id, s.is_member, u.username`;
+  GROUP BY g.group_name, l.completed_percent`;
 
   const values = [uuid]
 

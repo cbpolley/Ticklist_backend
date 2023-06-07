@@ -126,15 +126,17 @@ exports.add = async (req, res, next) => {
 
   db.query(query, values)
     .then(async (response) => {
-      console.log('response')
-      console.log(response)
-      console.log(lists)
-
       const share_query = `  
       INSERT INTO
-        sharing (user_id, uuid, is_member, created_at, updated_at)
+        sharing (
+          user_id, 
+          uuid, 
+          username,
+          is_member, 
+          created_at, 
+          updated_at)
       VALUES
-        ($1, $2, true, NOW(), NOW());`;
+        ($1, $2, (select username from users where uuid = $1), true, NOW(), NOW());`;
       const share_values = [owner_uuid, share_uuid];
 
       await db.query(share_query, share_values).catch(err => console.log(err))
