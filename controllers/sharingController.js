@@ -184,7 +184,7 @@ exports.getGroupMembers = async (req, res, next) => {
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
     g.share_uuid  = $1
-  GROUP BY g.group_name;
+  GROUP BY g.group_name`;
 
   const values = [uuid]
 
