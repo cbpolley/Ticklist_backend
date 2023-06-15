@@ -170,7 +170,7 @@ exports.getGroupMembers = async (req, res, next) => {
   const query = `
   SELECT
     g.group_name,
-    l.completed_percent,
+    (select avg(l.completed_percent) from lists l where l.group_id = $1) as completed_percent,
     json_agg(
       json_build_object(
         'user_id', s.user_id,
@@ -181,11 +181,10 @@ exports.getGroupMembers = async (req, res, next) => {
   FROM
     groups g
   LEFT JOIN sharing s on g.share_uuid = s.uuid
-  LEFT JOIN lists l on l.group_id = g.share_uuid
   LEFT JOIN users u on u.uuid = s.user_id
   WHERE
-    s.uuid = $1
-  GROUP BY g.group_name, l.completed_percent`;
+    g.share_uuid  = $1
+  GROUP BY g.group_name;
 
   const values = [uuid]
 
