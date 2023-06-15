@@ -164,13 +164,10 @@ exports.getGroupMembers = async (req, res, next) => {
 
   let uuid = req.params.uuid;
 
-  console.log(req.params)
-
   const query = `
   SELECT
     g.group_name,
     l.completed_percent,
-    (select is_member from sharing where user_id = $1) as is_member,
     json_agg(
       json_build_object(
         'user_id', s.user_id,
