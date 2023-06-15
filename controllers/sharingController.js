@@ -86,10 +86,13 @@ exports.shareWithUsernames = async (req, res, next) => {
 
   let userArray = req.body.packet.usernames.reduce((filter, obj) => { 
     if (obj.value && obj.value.length > 0 ){
-      filter.push(obj.value.toLowerCase().replace(/[^a-z0-9]/gi, '').trim())
+      filter.push(obj.value.toLowerCase().replace(/[^a-z0-9\d\s:]/gi, '').trim())
     }
     return filter  
   }, [])
+
+  console.log('userArray')
+  console.log(userArray)
 
   let usernames = "(" + userArray.map((k) => `'${k}'`).join(",") + ")"
   let share_uuid = req.body.packet.share_uuid
