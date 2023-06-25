@@ -37,8 +37,8 @@ exports.getSingle = async (req, res, next) => {
   FROM
     groups g
   LEFT JOIN lists l on l.group_id = g.share_uuid
-  LEFT JOIN list_contents lc on lc.list_id = l.list_id
-  LEFT JOIN format_options fo on fo.list_id = l.list_id
+  LEFT JOIN list_contents lc on lc.list_id = l.share_list_uuid
+  LEFT JOIN format_options fo on fo.list_id = l.share_list_uuid  
   WHERE
     g.share_uuid = $1
   GROUP BY

@@ -191,8 +191,6 @@ exports.getGroupMembers = async (req, res, next) => {
   db
     .query(query, values)
     .then((response) => {
-      console.log('members response.rows')
-      console.log(response.rows)
       res.status(200).send(response.rows)
     })
     .catch((err) => {
