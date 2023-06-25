@@ -193,7 +193,6 @@ exports.add = async (req, res, next) => {
 
               if (item.list_contents.length > 0) {
                 return {
-                  list_id: insertListResponse.rows[0].list_id,
                   share_list_uuid: share_list_uuid,
                   value: item.list_contents.value,
                   is_checked: item.list_contents.is_checked,
