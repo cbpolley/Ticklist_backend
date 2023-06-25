@@ -175,7 +175,7 @@ exports.add = async (req, res, next) => {
         const insert_list_values = [
           lists[index].list_name,
           share_list_uuid,
-          response.rows[0].group_id,
+          share_uuid,
           lists[index].color,
         ];
 
