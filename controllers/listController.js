@@ -36,8 +36,8 @@ exports.getSingle = async (req, res, next) => {
     ) AS format_options
 FROM 
   lists l 
-LEFT JOIN list_contents lc on lc.list_id = l.list_id
-LEFT JOIN format_options fo on fo.list_id = l.list_id
+LEFT JOIN list_contents lc on lc.list_id = l.share_list_uuid
+LEFT JOIN format_options fo on fo.list_id = l.share_list_uuid
 WHERE
       l.share_list_uuid = '${list_id}'
 GROUP BY
