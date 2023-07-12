@@ -60,6 +60,7 @@ const io = require("socket.io")(http, {
   cors:true,
   origins: ['http://localhost', 'http://localhost:8080',  'http://localhost:8080', '//localhost']
 });
+
 // set name space
 const groupsNameSpace = io.of("/groups");
 
